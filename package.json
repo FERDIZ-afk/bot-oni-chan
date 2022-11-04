@@ -1,0 +1,40 @@
+{
+  "name": "whatsaap-bot-oni-chan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "postinstall": "npm i typescript -g && tsc -p ./node_modules/@adiwajshing/baileys/ && cp ./node_modules/@adiwajshing/baileys/src/Defaults/baileys-version.json ./node_modules/@adiwajshing/baileys/lib/Defaults/baileys-version.json"
+  },
+  "nodemonConfig": {
+    "ext": "js,html,sh,py"
+  },
+  "keywords": [
+    "bot",
+    "bot-whatsaap",
+    "md",
+    "baileys-md",
+    "bot-oni-chan-md",
+    "bot-oni-chan",
+    "bot-oni-chan",
+    "bot-oni-chan-whatsaap"
+  ],
+  "author": "FERDIZ-afk",
+  "license": "ISC",
+  "dependencies": {
+    "@adiwajshing/baileys": "github:FERDIZ-afk/Baileys",
+    "@adiwajshing/keyed-db": "latest",
+    "@hapi/boom": "^10.0.0",
+    "awesome-phonenumber": "^3.3.0",
+    "chalk": "^4.1.2",
+    "child_process": "^1.0.2",
+    "express": "^4.18.1",
+    "jimp": "^0.16.2",
+    "lolcatjs": "^2.4.1",
+    "nodemon": "^2.0.20",
+    "pino": "^8.5.0",
+    "qrcode": "^1.5.1",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
