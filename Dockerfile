@@ -23,12 +23,16 @@ RUN yarn add link-preview-js
 
 RUN npm install pm2 -g
 
-RUN cd node_modules/@adiwajshing/baileys && npm run build:tsc && cp src/Defaults/baileys-version.json lib/Defaults/baileys-version.json && cd /root/apibotv4
+RUN cd node_modules/@adiwajshing/baileys && npm run build:tsc && cp src/Defaults/baileys-version.json lib/Defaults/baileys-version.json && cd /root/bot-oni-chan
 
 RUN cp node_modules/@adiwajshing/baileys/src/Defaults/baileys-version.json node_modules/@adiwajshing/baileys/lib/Defaults/baileys-version.json
 RUN ls node_modules/@adiwajshing/baileys/lib/Defaults
 
 RUN ls
+
+#ngak guna tapi jangan di ilangin     "postinstall": "npm i typescript -g && tsc -p ./node_modules/@adiwajshing/baileys/ && cp ./node_modules/@adiwajshing/baileys/src/Defaults/baileys-version.json ./node_modules/@adiwajshing/baileys/lib/Defaults/baileys-version.json"
+
+
 
 #awal pm2
 #USER PM2 DI SINI kalau mau makek pm2 yang CMD ["npm","run","dev"] di Block aja command nya

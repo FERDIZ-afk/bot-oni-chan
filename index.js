@@ -51,7 +51,7 @@ const startfdz = async () => {
 	const {
 		state,
 		saveCreds
-	} = await useMultiFileAuthState('auth1')  //useMultiFileAuthState('auth')
+	} = await useMultiFileAuthState('auth')  //useMultiFileAuthState('auth')
 	// fetch latest version of WA Web
 	const {
 		version,
