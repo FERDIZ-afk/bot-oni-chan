@@ -160,9 +160,9 @@ const startfdz = async () => {
 	//		require('./ivents/group-participants-update.js')(anu)
 		})
 		
-fdz.ev.on('groups.update', async (json) => {
-			console.log(json)
-	//		require('./ivents/groups-update.js')(json)
+fdz.ev.on('groups.update', async (gcupdet) => {
+			console.log(gcupdet)
+			require('./ivents/groups-update.js')(fdz,gcupdet)
 		})
 
 	fdz.ev.on("message.delete", async (m) => {

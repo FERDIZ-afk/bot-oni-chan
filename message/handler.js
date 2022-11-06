@@ -78,6 +78,6 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 		
 		
   	
-  	console.log(ownerbot)
+ ///	console.log(ownerbot)
   	
 }
