@@ -1,8 +1,11 @@
+const {
+	delay
+} = require('@adiwajshing/baileys')
 
-
-module.exports = async (send, json) => {
-  			console.log(json)
-			const res = json[0];
+module.exports  = async (send, code) => {
+  console.log(code)
+  try {
+			const res = code[0];
 			if (res.announce == true) {
 				await delay(2000)
 				send.sendMessage(res.id, {
@@ -34,5 +37,7 @@ module.exports = async (send, json) => {
 					text: `「 Group Settings Change 」\n*Group Subject telah diganti menjadi*\n\n*NEW NAME GROUP :*\n\n*${res.subject}*`,
 				});
 			} 
-  
+} catch (err) {
+			console.log(JSON.stringify(err, undefined, 2))
+		}
 }

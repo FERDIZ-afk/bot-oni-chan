@@ -51,7 +51,7 @@ const startfdz = async () => {
 	const {
 		state,
 		saveCreds
-	} = await useMultiFileAuthState('auth')  //useMultiFileAuthState('auth')
+	} = await useMultiFileAuthState('auth') //useMultiFileAuthState('auth')
 	// fetch latest version of WA Web
 	const {
 		version,
@@ -78,68 +78,67 @@ const startfdz = async () => {
 		//msgRetryCounterMap
 	})
 
-		fdz.ev.on('connection.update', async (update) => {
-			const {
-				connection,
-				lastDisconnect,
-				qr
-			} = update
+	fdz.ev.on('connection.update', async (update) => {
+		const {
+			connection,
+			lastDisconnect,
+			qr
+		} = update
 
-			try {
-			  if (qr) {
-			    console.log(color('[','white'), color('!','red'), color(']','white'), color(' scan qr nya kak makek WhatsApp 👍 '))
-					let qrkode = await qrcode.toDataURL(qr, {
-						scale: 20
-					})
-					qrwa = Buffer.from(qrkode.split`,` [1], 'base64')
-				}
-			  
-				if (connection === 'close') {
-				  qrwa = null
-					let reason = new Boom(lastDisconnect?.error)?.output.statusCode
-					if (reason === DisconnectReason.badSession) {
-						console.log(`Bad Session File, Please Delete Session and Scan Again`);
-						startfdz()
-					} else if (reason === DisconnectReason.connectionClosed) {
-						console.log("Connection closed, reconnecting....");
-						startfdz();
-					} else if (reason === DisconnectReason.connectionLost) {
-						console.log("Connection Lost from Server, reconnecting...");
-						startfdz();
-					} else if (reason === DisconnectReason.connectionReplaced) {
-						console.log("Connection Replaced, Another New Session Opened, Please Close Current Session First");
-						startfdz()
-					} else if (reason === DisconnectReason.loggedOut) {
-						console.log(`Device Logged Out, Please Scan Again And Run.`);
-						//			process.exit();
-					} else if (reason === DisconnectReason.restartRequired) {
-						console.log("Restart Required, Restarting...");
-						startfdz();
-					} else if (reason === DisconnectReason.timedOut) {
-						console.log("Connection TimedOut, Reconnecting...");
-						startfdz();
-					} else fdz.end(`Unknown DisconnectReason: ${reason}|${connection}`)
-				}
-				if (update.connection == "connecting" || update.receivedPendingNotifications == "false") {
-					lolcatjs.fromString(`[Sedang mengkoneksikan]`)
-				}
-				if (update.connection == "open" || update.receivedPendingNotifications == "true") {
-				  qrwa = null
-					lolcatjs.fromString(`[Connecting to] WhatsApp web`)
-					lolcatjs.fromString(`[Connected] ` + JSON.stringify(fdz.user, null, 2))
-				}
-
-			} catch (err) {
-				console.log('error di connection.update' + err)
-				startfdz();
+		try {
+			if (qr) {
+				console.log(color('[', 'white'), color('!', 'red'), color(']', 'white'), color(' scan qr nya kak makek WhatsApp 👍 '))
+				let qrkode = await qrcode.toDataURL(qr, {
+					scale: 20
+				})
+				qrwa = Buffer.from(qrkode.split`,` [1], 'base64')
 			}
 
-		})
+			if (connection === 'close') {
+				qrwa = null
+				let reason = new Boom(lastDisconnect?.error)?.output.statusCode
+				if (reason === DisconnectReason.badSession) {
+					console.log(`Bad Session File, Please Delete Session and Scan Again`);
+					startfdz()
+				} else if (reason === DisconnectReason.connectionClosed) {
+					console.log("Connection closed, reconnecting....");
+					startfdz();
+				} else if (reason === DisconnectReason.connectionLost) {
+					console.log("Connection Lost from Server, reconnecting...");
+					startfdz();
+				} else if (reason === DisconnectReason.connectionReplaced) {
+					console.log("Connection Replaced, Another New Session Opened, Please Close Current Session First");
+					startfdz()
+				} else if (reason === DisconnectReason.loggedOut) {
+					console.log(`Device Logged Out, Please Scan Again And Run.`);
+					//			process.exit();
+				} else if (reason === DisconnectReason.restartRequired) {
+					console.log("Restart Required, Restarting...");
+					startfdz();
+				} else if (reason === DisconnectReason.timedOut) {
+					console.log("Connection TimedOut, Reconnecting...");
+					startfdz();
+				} else fdz.end(`Unknown DisconnectReason: ${reason}|${connection}`)
+			}
+			if (update.connection == "connecting" || update.receivedPendingNotifications == "false") {
+				lolcatjs.fromString(`[Sedang mengkoneksikan]`)
+			}
+			if (update.connection == "open" || update.receivedPendingNotifications == "true") {
+				qrwa = null
+				lolcatjs.fromString(`[Connecting to] WhatsApp web`)
+				lolcatjs.fromString(`[Connected] ` + JSON.stringify(fdz.user, null, 2))
+			}
+
+		} catch (err) {
+			console.log('error di connection.update' + err)
+			startfdz();
+		}
+
+	})
 
 
 	fdz.ev.on('messages.upsert', async chatUpdate => {
 		try {
-
 			mek = chatUpdate.messages[0]
 			if (!mek.message) return
 			mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
@@ -155,58 +154,22 @@ const startfdz = async () => {
 		}
 	})
 
-		fdz.ev.on('group-participants.update', async (anu) => {
-			console.log(anu)
-	//		require('./ivents/group-participants-update.js')(anu)
-		})
-		
-fdz.ev.on('groups.update', async (gcupdet) => {
-			console.log(gcupdet)
-			require('./ivents/groups-update.js')(fdz,gcupdet)
-		})
+	fdz.ev.on('group-participants.update', async (anu) => {
+		require('./ivents/group-participants-update.js')(fdz, anu)
+	})
 
-	fdz.ev.on("message.delete", async (m) => {
-		if (!m) m = false;
-	//	require('./ivents/message-delete.js')(fdz,json)
+	// detect group update
+	fdz.ev.on("groups.update", async (json) => {
+		require('./ivents/groups-update.js')(fdz, json)
+	})
 
-	});
-
+	fdz.ev.on("message.delete", async (json) => {
+		require('./ivents/message-delete.js')(fdz, json)
+	})
 
 
 	fdz.ev.process(
 		async (events) => {
-			// sesuatu tentang koneksi berubah
-			// mungkin ditutup, atau kami menerima semua pesan offline atau koneksi dibuka
-/*
-			if (events['connection.update']) {
-				const update = events['connection.update']
-				const {
-					connection,
-					lastDisconnect,
-					qr
-				} = update
-				if (qr) {
-					let qrkode = await qrcode.toDataURL(qr, {
-						scale: 20
-					})
-					qrwa = Buffer.from(qrkode.split`,` [1], 'base64')
-				}
-
-				if (connection === 'open') {
-				  qrwa = null
-          console.log(fdz.user)
-				}
-				if (connection === 'close') {
-					qrwa = null
-					if ((lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut) {
-						await startSock()
-					} else {
-						console.log('Connection closed. You are logged out.')
-					}
-				}
-				// console.log('connection update', update)
-			}
-*/
 			// selalu offline
 			if (events['presence.update']) {
 				await fdz.sendPresenceUpdate('unavailable')
@@ -220,7 +183,7 @@ fdz.ev.on('groups.update', async (gcupdet) => {
 					if (msg.key.remoteJid === 'status@broadcast') {
 						//console.log(JSON.stringify(upsert, '', 2))
 						if (msg.message?.protocolMessage) return
-						console.log(`Lihat status ${msg.pushName} ${msg.key.participant.split('@')[0]}\n`)
+						console.log(`Lihat status ${msg.pushName} ${msg.key.participant.split('@')[0]}`)
 						await fdz.readMessages([msg.key])
 						await delay(1000)
 						return fdz.readMessages([msg.key])
@@ -229,13 +192,10 @@ fdz.ev.on('groups.update', async (gcupdet) => {
 
 
 			}
-
-			// kredensial diperbarui -- simpan
+			// kredensial diperbarui -- simpan season WhatsApp web
 			if (events['creds.update']) {
 				await saveCreds()
 			}
-
-
 		}
 	)
 
