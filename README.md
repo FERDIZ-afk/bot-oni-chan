@@ -1,4 +1,4 @@
-# kitagawa-md
+# oni-chan
 Base WhatsApp Bot Multi Device
 
 ## NOTE
@@ -8,7 +8,7 @@ Ngejual SC ORI jahanam brader, neraka menunggumu
 <p align="center">
 	<img src="https://avatars.githubusercontent.com/u/69185890?v=4" width="35%" style="margin-left: auto;margin-right: auto;display: block;">
 </p>
-<h1 align="center">kitagawa-md</h1>
+<h1 align="center">oni-chan</h1>
 <br>
 <p align="center">
 <a href="https://github.com/FERDIZ-afk"><img title="Author" src="https://img.shields.io/badge/AUTHOR-FERDIZ afk-orange.svg?style=for-the-badge&logo=github"></a>
