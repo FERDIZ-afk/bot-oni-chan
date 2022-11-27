@@ -1,10 +1,15 @@
+/**
+   * Create By FERDIZ -AFK 
+   * Contact Me on wa.me/6287877173955
+   * Follow https://github.com/FERDIZ-afk
+*/
 const {
 	delay
 } = require('@adiwajshing/baileys')
 
 module.exports = async (send, code) => {
 	console.log(code)
-	if (!code.participants.includes(send.user.jid) && !code.action.includes('remove')) {
+	if (!code.participants.includes(send.user.jid)) {
 		///       if (code.participants.length > 2) return
 		try {
 

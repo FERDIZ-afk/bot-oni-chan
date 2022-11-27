@@ -2,13 +2,15 @@
 Base WhatsApp Bot Multi Device
 
 ## NOTE
-This Script is for everyone, not for Sale
-Ngejual SC ORI jahanam brader, neraka menunggumu
+This Script is for everyone, not for Sale.
+Ngejual SC ORI jahanam brader, neraka menunggumu.
+
+Sesion ini menggunakan useMultiFileAuthState dan di simpan di folder bersama auth , jadi maklum kalau nanti file .json nya banyak dan berukuran besar.
 
 <p align="center">
 	<img src="https://avatars.githubusercontent.com/u/69185890?v=4" width="35%" style="margin-left: auto;margin-right: auto;display: block;">
 </p>
-<h1 align="center">oni-chan</h1>
+<h1 align="center">bot-oni-chan</h1>
 <br>
 <p align="center">
 <a href="https://github.com/FERDIZ-afk"><img title="Author" src="https://img.shields.io/badge/AUTHOR-FERDIZ afk-orange.svg?style=for-the-badge&logo=github"></a>
@@ -38,11 +40,11 @@ yarn
 ## FOR TERMUX/UBUNTU/SSH USER
 
 ```bash
-apt update && apt upgrade
-apt install git -y
-apt install nodejs -y
-apt install yarn -y
-apt install ffmpeg -y
+sudo apt update && apt upgrade
+sudo apt install git -y
+sudo apt install nodejs -y
+sudo apt install yarn -y
+sudo apt install ffmpeg -y
 git clone https://github.com/FERDIZ-afk/bot-oni-chan
 cd bot-oni-chan
 yarn
@@ -68,7 +70,7 @@ npm start
 WhatsApp bot is still in the development stage, so there are a few bugs
 WhatsApp Connection (BETA, not working perfectly)
 
-Editing Number Owner & session name in [`setting.json`](https://github.com/FERDIZ-afk/bot-oni-chan/blob/master/setting.json)
+Editing Number Owner & session name in [`setting.json`](https://github.com/FERDIZ-afk/bot-oni-chan/)
 
 
 ## Thanks To

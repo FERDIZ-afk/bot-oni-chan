@@ -1,7 +1,10 @@
+/**
+   * Create By FERDIZ -AFK 
+   * Contact Me on wa.me/6287877173955
+   * Follow https://github.com/FERDIZ-afk
+*/
 console.log('Starting...')
-
 let { spawn } = require('child_process')
-
 let path = require('path')
 
 function start() {

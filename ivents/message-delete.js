@@ -1,4 +1,11 @@
-//
+/**
+   * Create By FERDIZ -AFK 
+   * Contact Me on wa.me/6287877173955
+   * Follow https://github.com/FERDIZ-afk
+*/
+const {
+	delay
+} = require('@adiwajshing/baileys')
 
 module.exports = async (fdz, m) => {
 	console.log(m)
@@ -6,7 +13,6 @@ module.exports = async (fdz, m) => {
 	const isGroup = m.remoteJid.endsWith('@g.us')
 	if (!isGroup) return
 	try {
-
 		const dataChat = global.dbchatpesan
 		let mess = dataChat.find((a) => a.id == m.id);
 
@@ -30,9 +36,9 @@ module.exports = async (fdz, m) => {
 		);
 
 		await fdz.copyNForward(froms, mek, true);
+  //  await fdz.relayMessage(froms, mek, { messageId: mek.key.id });
 		await delay(4000)
 		let messek = dataChat.find((a) => a.id == m.id);
-
 		for (let [i, te] of dataChat.entries()) {
 			if (te.id === m.id) {
 				dataChat.splice(i, 1); // Tim is now removed from "users"
@@ -41,8 +47,5 @@ module.exports = async (fdz, m) => {
 		}
 
 	} catch (err) {
-
 	}
-
-
 }

@@ -1,3 +1,9 @@
+/**
+   * Create By FERDIZ -AFK 
+   * Contact Me on wa.me/6287877173955
+   * Follow https://github.com/FERDIZ-afk
+*/
+
 qrwa = null
 PORT = process.env.PORT || 3000
 const qrcode = require('qrcode')
@@ -39,13 +45,110 @@ const {
 	Boom
 } = require("@hapi/boom")
 const lolcatjs = require('lolcatjs')
+const path = require("path");
+const fs = require("fs");
 
 const {
 	modulewa,
 } = require('./lib/simpel')
-const { color } = require('./lib/color')
+const {
+	sendmessages,
+} = require('./message/messages-send')
 
+const { color } = require('./lib/color')
+const utils = require("./utils");
+const { prefixbot } = require('./config/settings')
 const msgRetryCounterMap = MessageRetryMap || { }
+
+
+
+
+const attribute = {};
+attribute.prefix = prefixbot 
+
+attribute.command = new Map();
+
+// database game
+global.addMap = (x) => {
+	attribute[x] = new Map();
+};
+
+// lock cmd
+attribute.lockcmd = new Map();
+
+
+
+const ReadFitur = () => {
+	let pathdir = "./message/command" //path.join(__dirname, "./message/command");
+	let fitur = fs.readdirSync(pathdir);
+	console.log("Loading commands..")
+//	spinnies.add("spinner-1", { text: "Loading commands..", color: "green" });
+	fitur.forEach(async (res) => {
+		const commands = fs.readdirSync(`${pathdir}/${res}`).filter((file) => file.endsWith(".js"));
+		for (let file of commands) {
+			const command = require(`${pathdir}/${res}/${file}`);
+			if (typeof command.run != "function") continue;
+			const cmdOptions = {
+				name: "command",
+				alias: [""],
+				desc: "",
+				use: "",
+				type: "", // default: changelog
+				category: typeof command.category == "undefined" ? "" : res.toLowerCase(),
+				wait: false,
+				isOwner: false,
+				isAdmin: false,
+				isQuoted: false,
+				isGroup: false,
+				isBotAdmin: false,
+				isMedia: {
+					isQVideo: false,
+					isQAudio: false,
+					isQImage: false,
+					isQSticker: false,
+					isQDocument: false,
+				},
+				disable: false,
+				run: () => {},
+			};
+			let cmd = utils.parseOptions(cmdOptions, command);
+			let options = {};
+			for (var k in cmd)
+				typeof cmd[k] == "boolean"
+					? (options[k] = cmd[k])
+					: k == "query" || k == "isMedia"
+					? (options[k] = cmd[k])
+					: "";
+			let cmdObject = {
+				name: cmd.name,
+				alias: cmd.alias,
+				desc: cmd.desc,
+				use: cmd.use,
+				type: cmd.type,
+				category: cmd.category,
+				options: options,
+				run: cmd.run,
+			};
+			attribute.command.set(cmd.name, cmdObject);
+			require("delay")(100);
+	//		global.reloadFile(`./message/command/${res}/${file}`);
+		}
+	});
+	console.log("Command loaded successfully")
+//	spinnies.succeed("spinner-1", { text: "Command loaded successfully", color: "yellow" });
+};
+// cmd
+ReadFitur();
+
+
+
+
+
+
+
+
+
+
 
 const startfdz = async () => {
 	const {
@@ -66,7 +169,7 @@ const startfdz = async () => {
 		})
 	})
 
-	const fdz = makeWASocket({
+	const sock = makeWASocket({
 		version,
 		logger: Pino({
 			level: 'silent'
@@ -77,7 +180,9 @@ const startfdz = async () => {
 		markOnlineOnConnect: false
 		//msgRetryCounterMap
 	})
-
+  const fdz = sendmessages(sock,store)
+ 	if (fdz.user && fdz.user.id) fdz.user.jid = jidNormalizedUser(fdz.user.id)
+  global.fdz = fdz
 	fdz.ev.on('connection.update', async (update) => {
 		const {
 			connection,
@@ -136,6 +241,7 @@ const startfdz = async () => {
 
 	})
 
+store.bind(fdz.ev)
 
 	fdz.ev.on('messages.upsert', async chatUpdate => {
 		try {
@@ -144,11 +250,8 @@ const startfdz = async () => {
 			mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
 			//		if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
 			var m = modulewa(fdz, mek, store)
-
 			//		m.isBaileys = m.key.id.startsWith('BAE5') || m.key.id.startsWith('3EB0')
-			require('./message/handler.js')(fdz, m, mek, chatUpdate, store)
-
-			//		require('../controllers/botowner.js')(fdz, m, mek, chatUpdate, store)
+			require('./message/handler.js')(fdz, m, mek, chatUpdate, store, attribute)
 		} catch (err) {
 			//console.log(JSON.stringify(err, undefined, 2))
 		}
@@ -166,7 +269,16 @@ const startfdz = async () => {
 	fdz.ev.on("message.delete", async (json) => {
 		require('./ivents/message-delete.js')(fdz, json)
 	})
-
+  /*
+  fdz.ev.on("viewOnceMessage", async (json) => {
+		console.log(json)
+		require('./ivents/messages-viewone.js')(fdz,json)
+	})
+	*/
+	
+  fdz.ev.on("messages.reaction", async (json) => {
+		require('./ivents/messages-reaction.js')(fdz, store, json)
+	})
 
 	fdz.ev.process(
 		async (events) => {
@@ -205,4 +317,4 @@ const startfdz = async () => {
 }
 
 startfdz()
-process.on('uncaughtException', console.error)
+//process.on('uncaughtException', console.error)

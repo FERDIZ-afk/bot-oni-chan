@@ -1,10 +1,19 @@
 {
   "name": "whatsaap-bot-oni-chan",
   "version": "1.0.0",
-  "description": "",
+  "description": "simpel WhatsApp bot",
   "main": "run.js",
+  "directories": {
+    "assets":"assets",
+    "config":"config",
+    "lib": "lib",
+    "ivents":"ivents",
+    "message":"message",
+    "utils":"utils"
+  },
   "scripts": {
-    "start": "nodemon run.js"
+    "start": "node -x 'node run.js || touch run.js'",
+    "dev": "nodemon -x 'node run.js || touch run.js'"
   },
   "nodemonConfig": {
     "ext": "js,html,sh,py"
@@ -24,20 +33,32 @@
   "dependencies": {
     "@adiwajshing/baileys": "github:FERDIZ-afk/Baileys",
     "@adiwajshing/keyed-db": "latest",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@hapi/boom": "^10.0.0",
-    "awesome-phonenumber": "^3.3.0",
+    "awesome-phonenumber": "^2.64.0",
     "chalk": "^4.1.2",
+    "check-disk-space": "^3.3.1",
     "child_process": "^1.0.2",
+    "delay": "^5.0.0",
     "express": "^4.18.1",
-    "jimp": "^0.16.2",
-    "link-preview-js": "^3.0.4",
+    "file-type": "^16.5.4",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^10.0.0",
+    "ikyy": "latest",
+    "jimp": "^0.16.1",
+    "link-preview-js": "^2.1.19",
     "lolcatjs": "^2.4.1",
-    "moment-timezone": "^0.5.38",
-    "nodemon": "^2.0.20",
-    "pino": "^8.5.0",
+    "moment-timezone": "^0.5.33",
+    "node-fetch": "3.0.0-beta.9",
+    "nodemon": "^2.0.7",
+    "performance-now": "^2.1.0",
+    "pino": "^8.3.0",
+    "pm2": "^5.2.0",
     "qrcode": "^1.5.1",
     "qrcode-terminal": "^0.12.0",
     "sharp": "^0.30.5",
-    "syntax-error": "^1.4.0"
+    "syntax-error": "^1.4.0",
+    "typescript": "^4.8.4",
+    "util": "^0.12.4"
   }
 }

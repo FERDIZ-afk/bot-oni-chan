@@ -1,4 +1,9 @@
-  const {
+/**
+   * Create By FERDIZ -AFK 
+   * Contact Me on wa.me/6287877173955
+   * Follow https://github.com/FERDIZ-afk
+*/
+const {
 	default: makeWASocket,
 	DisconnectReason,
 	AnyMessageContent,
@@ -17,20 +22,26 @@
 } = require('@adiwajshing/baileys')
 
 const moment = require("moment-timezone")
+const time = moment().tz('Asia/Jakarta').format("HH:mm:ss")
 
 const util = require('util')
+const fs = require("fs");
 const {exec,spawn} = require("child_process")
+const IkyyClient = require("ikyy");
+global.rzky = new IkyyClient();
+
 
 var dbs = []
 global.dbchatpesan = dbs
-var ownerWa = ['6287877173955@s.whatsapp.net']
 
 const { color } = require('../lib/color')
+const { prefixbot, ownerWa } = require('../config/settings')
+const { infobot } = require("../config/botrespon")
 
+const prefix = prefixbot
+const multi_pref = new RegExp("^[" + "!#%&?/;:,.~-+=".replace(/[|\\{}()[\]^$+*?.\-\^]/g, "\\$&") + "]");
 
-
-
-module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
+module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 	try {
 
 		msg = m
@@ -42,9 +53,11 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 		const content = JSON.stringify(mek.message)
 		const type = Object.keys(mek.message)[0];
 		1
-
+    
+    
+		global.dashboard = JSON.parse(fs.readFileSync("./database/dashboard.json"));
 		if (m && type == "protocolMessage") fdz.ev.emit("message.delete", m.message.protocolMessage.key);
-		const body = (type === 'conversation' && m.message.conversation) ? m.message.conversation : (type == 'imageMessage') && m.message.imageMessage.caption ? m.message.imageMessage.caption : (type == 'videoMessage') && m.message.videoMessage.caption ? m.message.videoMessage.caption : (type == 'extendedTextMessage') && m.message.extendedTextMessage.text ? m.message.extendedTextMessage.text : (type == 'listResponseMessage') && m.message.listResponseMessage.singleSelectm.reply.selectedRowId ? m.message.listResponseMessage.singleSelectm.reply.selectedRowId : (type == 'buttonsResponseMessage') && m.message.buttonsResponseMessage.selectedButtonId ? m.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonm.replyMessage') && m.message.templateButtonm.replyMessage.selectedId ? m.message.templateButtonm.replyMessage.selectedId : ''
+		const body = (type === 'conversation' && m.message.conversation) ? m.message.conversation : (type == 'imageMessage') && m.message.imageMessage.caption ? m.message.imageMessage.caption : (type == 'videoMessage') && m.message.videoMessage.caption ? m.message.videoMessage.caption : (type == 'extendedTextMessage') && m.message.extendedTextMessage.text ? m.message.extendedTextMessage.text : (type == 'listResponseMessage') && m.message.listResponseMessage.singleSelectReply.selectedRowId ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (type == 'buttonsResponseMessage') && m.message.buttonsResponseMessage.selectedButtonId ? m.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && m.message.templateButtonReplyMessage.selectedId ? m.message.templateButtonReplyMessage.selectedId : ''
 
 		var budy = (typeof m.text == 'string' ? m.text : '')
 
@@ -55,6 +68,9 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 		const text = q = args.join(" ")
 		const quoted = m.quoted ? m.quoted : m
 		const mime = (quoted.msg || quoted).mimetype || ''
+		
+		const command = body.trim().split(/ +/)[0]  // body.toLowerCase().split(' ')[0] || ''
+		const isCmd = budy.startsWith(prefix)
 
 		const pushName = msg.pushName
 		const isGroup = msg.key.remoteJid.endsWith('@g.us')
@@ -64,7 +80,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 		var ownerbot = [botNumber]
 		const isOwner = sender.includes(ownerWa) || sender.includes(ownerWa) || sender.includes(ownerbot)
 
-		const groupMetadata = isGroup ? await fdz.groupMetadata(from) : ''
+		const groupMetadata = isGroup ? await fdz.groupMetadata(m.chat) : ''
 		const groupName = m.isGroup ? await groupMetadata.subject : ''
 		const groupDesc = m.isGroup ? await groupMetadata.desc : ''
 		const groupOwner = m.isGroup ? await groupMetadata.owner : ''
@@ -88,9 +104,144 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 		const isviewOnce = isQuotedMsg ? content.includes('viewOnceMessage') ? true : false : false
 
 
+		let temp_pref = multi_pref.test(body) ? body.split("").shift() : prefix;
+
+
+  mess = {
+    				wait: '⌛ Sedang di proses「 ⏳ 」',
+    				success: '✔️ Berhasil ✔️',
+    				error: {
+    					stick: '❌ Gagal, terjadi kesalahan saat mengkonversi gambar ke sticker ❌',
+    					Iv: '❌ Link tidak valid ❌'
+    				},
+    				only: {
+    					group: '❌ Perintah ini hanya bisa di gunakan dalam group! ❌',
+    					ownerG: '❌ Perintah ini hanya bisa di gunakan oleh owner group! ❌',
+    					ownerB: '❌ Perintah ini hanya bisa di gunakan oleh owner bot! ❌',
+    					admin: '❌ Perintah ini hanya bisa di gunakan oleh admin group! ❌',
+    					Badmin: '❌ Perintah ini hanya bisa di gunakan ketika bot menjadi admin! ❌'
+    				}
+    			}
+
+
+
+if ( m.mtype == 'viewOnceMessage') {
+  try {
+   // console.log(m)
+  let teks = `「 *Anti ViewOnce Message* 」
+      
+🤠 *Name* : ${m.pushName}
+👾 *User* : wa.me//${m.sender.split("@")[0]}
+⏰ *Clock* : ${moment.tz('Asia/Jakarta').format('HH:mm:ss')} WIB
+      
+💫 *MessageType* : ${m.mtype}`
+    m.msg.caption = teks + "\n\n\n💬 *CAPTION* : \n\n"+ m.msg.caption
+//  m.reply(teks)
+  await delay(500)
+  m.copyNForward(m.chat, true, {
+  readViewOnce: true
+  }, {
+  quoted: m
+  }) //.catch(_ => m.reply('Mungkin dah pernah dibuka bot'))
+  } catch (err) {
+		console.error(util.format(err))
+		//console.error(util.format(m))
+		fdz.sendMessage(m.sender, {
+			text: util.format(err),
+		}, {
+			quoted: m
+		})
+	}}
+	
+	
+	/*
+	if ( m.mtype == 'viewOnceMessage') {
+  try {
+		messagee = { ...msg };
+		messagee.message[Object.keys(msg.message)[0]].viewOnce = false;
+		const opt = {
+			remoteJid: m.key.remoteJid,
+			participant: m.sender,
+			message: messagee,
+		};
+		fdz.ev.emit("viewOnceMessage", opt);
+  } catch (err) {
+		console.error(util.format(err))
+		//console.error(util.format(m))
+		fdz.sendMessage(m.sender, {
+			text: util.format(err),
+		}, {
+			quoted: m
+		})
+	}}
+*/
+
+		//Reply no prefix
+	  if (budy == "P") {
+	    await delay(500)
+			await m.reply("*pa pe pa pe* \nketik *mode* kak buat tahu\nmode bot saat ini\nketik *prefix* kak buat tahu\nprefix / awalan command bot saat ini ")
+		} else if (budy == "p") {
+		  await delay(500)
+			await m.reply("*pa pe pa pe* \nketik *mode* kak buat tahu\nmode bot saat ini\nketik *prefix* kak buat tahu\nprefix / awalan command bot saat ini ")
+		} else if (budy == "prefix") {
+		  await delay(500)
+			await m.reply(` *Prefix saat ini:* ${prefix}\n prefix adalah awal\ndari suatu command untuk bot.\n\n*contoh* *:* ${prefix}menu \n\ningat perhatikan juga spasi dan besar kecil ngak nya awalan huruf`)
+		} else if (budy == "Prefix") {
+		  await delay(500)
+			await m.reply(` *Prefix saat ini:* ${prefix}\n prefix adalah awal\ndari suatu command untuk bot.\n\n*contoh* *:* ${prefix}menu \n\ningat perhatikan juga spasi dan besar kecil ngak nya awalan huruf`)
+		} else if (budy == "makasihya") {
+		  await delay(500)
+			await m.reply(" *sama sama 🥰* ")
+		} else if (budy == "Makasihya") {
+		  await delay(500)
+			await m.reply(" *sama sama 🥰* ")
+		} else if (budy == "info") {
+		  await delay(500)
+		   var teks = await infobot(fdz, sender, prefix, pushName)
+      await  m.reply(teks)
+    } else if (budy == "Info") {
+		  await delay(500)
+		   var teks = await infobot(fdz, sender, prefix, pushName)
+      await  m.reply(teks)
+    }
+
+				const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
+		const cmd =
+			map.command.get(body.trim().split(/ +/).shift().toLowerCase()) ||
+			[...map.command.values()].find((x) =>
+				x.alias.find((x) => x.toLowerCase() == body.trim().split(/ +/).shift().toLowerCase())
+			) ||
+			map.command.get(cmdName) ||
+			[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == cmdName));
+		if (isCmd && !cmd) {
+			var data = [...map.command.keys()];
+			[...map.command.values()]
+				.map((x) => x.alias)
+				.join(" ")
+				.replace(/ +/gi, ",")
+				.split(",")
+				.map((a) => data.push(a));
+			var result = rzky.tools.detectTypo(cmdName, data);
+			if (result.status != 200) return;
+			teks = `Maybe this is what you mean?\n\n`;
+			angka = 1;
+			if (typeof result.result == "object" && typeof result.result != "undefined") {
+				for (let i of result.result) {
+					var alias =
+						[...map.command.values()].find((x) => x.name == i.teks) ||
+						[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == i.teks));
+					teks += `*${angka++}. ${map.prefix}${i.teks}*\n`;
+					teks += `Alias: *${alias.alias.join(", ")}*\n`;
+					teks += `Accuracy: *${i.keakuratan}*\n\n`;
+				}
+				teks += `If true, please re-command!`;
+				await msg.reply(teks);
+			}
+		}
+
 		if (isOwner) {
 			if (budy.startsWith(">")) {
-				if (!isOwner) return m.reply('```OWNER ONLY```')
+				if (!isOwner) return m.reply(mess.only.ownerB)
 				console.log(color('[EVAL] MODE >'), color(moment(mek.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`Owner!`))
 
 				if (!q) return m.reply('Promise { md }')
@@ -106,7 +257,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 				}
 
 			} else if (budy.startsWith(">>")) {
-				if (!isOwner) return m.reply('```OWNER ONLY```')
+				if (!isOwner) return m.reply(mess.only.ownerB)
 				console.log(color('[EVAL] MODE >>'), color(moment(mek.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`Owner!`))
 				try {
 					var textke = util.format(await eval(`(async() => { return ${args.join(" ")} })()`))
@@ -115,14 +266,14 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 					m.reply(`${err}`)
 				}
 			} else if (budy.startsWith("$ ")) {
-				if (!isOwner) return m.reply('```OWNER ONLY```')
+				if (!isOwner) return m.reply(mess.only.ownerB)
 				console.log(color('[EXEC]'), color(moment(mek.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`Owner!`))
 				exec(budy.slice(2), (err, stdout) => {
 					if (err) return m.reply(`${err}`)
 					if (stdout) m.reply(`${stdout}`)
 				})
 			} else if (budy.startsWith("<")) {
-				if (!isOwner) return m.reply('```OWNER ONLY```')
+				if (!isOwner) return m.reply(mess.only.ownerB)
 				console.log(color('[EVAL] MODE <'), color(moment(mek.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`Owner!`))
 				try {
 					return m.reply(JSON.stringify(eval(`${args.join(' ')}`), null, '\t'))
@@ -130,7 +281,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 					m.reply(`${err}`)
 				}
 			} else if (budy.startsWith(".>")) {
-				if (!isOwner) return m.reply('```OWNER ONLY```')
+				if (!isOwner) return m.reply(mess.only.ownerB)
 				console.log(color('[EVAL] MODE .>'), color(moment(mek.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`Owner!`))
 				if (!q) return m.reply('codenya mana kak')
 				syntaxerror = require('syntax-error')
@@ -149,19 +300,114 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 					await m.reply(_syntax + require('util').format(_return))
 				}
 			}
-
 		}
 		
 		
+
 		
 		
 		
 		
 		
+
+		
+if (m.message && !m.key.fromMe ) {
+      //      fdz.sendReadReceipt(m.chat, m.sender, [m.key.id])
+            fdz.readMessages([m.key])
+	    if (!isGroup && isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(command), 'dari', color(sender.split('@')[0]), 'args :', color(args.length))
+    if (isCmd && isGroup) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, 'message', color(command), 'nomor', color(sender.split('@')[0]), 'Dari grup', color(groupName), 'args :', color(args.length))
+   
+             if (!isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ PRIVATE ]", "aqua"), color(budy || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
+            if (isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[  GROUP  ]", "aqua"), color(budy || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
+            if (!isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(budy || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
+            if (isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(budy || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
+        }
+		
+
+if (!cmd) return;
+
+		let optionsCmd = cmd.options;
+		if (optionsCmd.noPrefix) {
+			if (isCmd) return;
+			q = body.split(" ").splice(1).join(" ");
+		} else if (!optionsCmd.noPrefix) {
+			if (!isCmd) return;
+		}
 		
 		
+				try {
+				  await m.reply(mess.wait)
+			await cmd.run(
+				{ msg, fdz, from, fromMe, type, body,budy, mess},
+				{ quoted, mime, pushName, isGroup, botNumber,  isOwner, q, map, args, prefix: temp_pref, chat: m, command, groupMetadata, groupMembers,groupAdmins, isBotGroupAdmins, isGroupAdmins, isImage,isVideo,isSticker,isQuotedMsg,isQuotedImage,isQuotedAudio,isQuotedDocument,isQuotedVideo,isQuotedSticker,isviewOnce}
+			);
+		} catch (e) {
+			
+			await fdz.sendMessage(ownerWa[0], {
+			text: util.format(e),
+		}, {
+			quoted: m
+		})
+		}
 		
+		/*
 		
+switch (command) {
+  
+//Owner Menu
+case prefix + 'restart': {
+	if (!isOwner) throw m.reply(mess.only.ownerB)
+	if (!process.send) throw m.reply('Dont: node index.js\nDo: node main.js')
+	if (fdz.user.jid) {
+	  //  fs.writeFileSync('./database/mess.json', JSON.stringify([], null, 2))
+		await m.reply('*Restarting Bot...*')
+		await delay(1500)
+		exec(`pm2 restart webot`)
+//		process.send('reset')
+	//	m.reply(mess.done)
+	} else throw m.reply('Eits tidak semudah itu Ferguso')
+}
+break
+ 
+case prefix + 'up':
+case prefix + 'update': {
+	if (!isOwner) throw m.reply(mess.only.ownerB)
+	if (!process.send) throw m.reply('Dont: node index.js\nDo: node main.js')
+	if (fdz.user.jid) {
+	  //  fs.writeFileSync('./database/mess.json', JSON.stringify([], null, 2))
+exec(`git pull`, (err, stdout) => {
+					if (err) return m.reply(`${err}`)
+					if (stdout) m.reply(`${stdout}`)
+				})
+//		process.send('reset')
+		await delay(1500)
+	} else throw m.reply('Eits tidak semudah itu Ferguso')
+}
+break
+
+
+	case prefix + 'public': {
+		if (!isOwner) return m.reply(mess.only.ownerB)
+		if (banChats === false) return await m.reply('Dah public daritadi mank')
+		banChats = false
+		m.reply(`「 *PUBLIC-MODE* 」`)
+	}
+	break
+
+case prefix + 'self': {
+	if (!isOwner) return m.reply(mess.only.ownerB)
+	if (banChats === true) return await m.reply('Dah self daritadi mank')
+	//	uptime = process.uptime()
+	banChats = true
+	m.reply(`「 *SELF-MODE* 」`)
+}
+break
+
+default:
+
+}
+		
+		*/
 		
 		
 		
@@ -178,9 +424,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store) => {
 		///	console.log(ownerbot)
 	} catch (err) {
 		e = String(err);
-		if (!e.includes("ban")) {
-			return
-		}
+		
 
 		console.error(util.format(err))
 		//console.error(util.format(m))
