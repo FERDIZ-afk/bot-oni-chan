@@ -126,6 +126,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 
 
 if ( m.mtype == 'viewOnceMessage') {
+  
   try {
    // console.log(m)
   let teks = `「 *Anti ViewOnce Message* 」
@@ -136,11 +137,12 @@ if ( m.mtype == 'viewOnceMessage') {
       
 💫 *MessageType* : ${m.mtype}`
     m.msg.caption = teks + "\n\n\n💬 *CAPTION* : \n\n"+ m.msg.caption
-//  m.reply(teks)
+
   await delay(500)
   m.copyNForward(m.chat, true, {
   readViewOnce: true
   }, {
+//	mentionedJid: j
   quoted: m
   }) //.catch(_ => m.reply('Mungkin dah pernah dibuka bot'))
   } catch (err) {
@@ -151,7 +153,10 @@ if ( m.mtype == 'viewOnceMessage') {
 		}, {
 			quoted: m
 		})
-	}}
+	}
+  
+  
+}
 	
 	
 	/*
@@ -239,6 +244,7 @@ if ( m.mtype == 'viewOnceMessage') {
 			}
 		}
 
+
 		if (isOwner) {
 			if (budy.startsWith(">")) {
 				if (!isOwner) return m.reply(mess.only.ownerB)
@@ -304,13 +310,6 @@ if ( m.mtype == 'viewOnceMessage') {
 		
 		
 
-		
-		
-		
-		
-		
-
-		
 if (m.message && !m.key.fromMe ) {
       //      fdz.sendReadReceipt(m.chat, m.sender, [m.key.id])
             fdz.readMessages([m.key])
@@ -334,15 +333,66 @@ if (!cmd) return;
 			if (!isCmd) return;
 		}
 		
+		/*
+		if (cmd && cmd.category != "private") {
+			let comand = dashboard.find((command) => command.name == cmd.name);
+			if (comand) {
+				comand.success += 1;
+				comand.lastUpdate = Date.now();
+				fs.writeFileSync("./database/dashboard.json", JSON.stringify(dashboard));
+			} else {
+				dashboard.push({ name: cmd.name, success: 1, failed: 0, lastUpdate: Date.now() })
+				fs.writeFileSync("./database/dashboard.json"), JSON.stringify(dashboard));
+			}
+		}
+		*/
+		
+		if (optionsCmd.isAdmin && !isGroupAdmins) {
+			await fdz.sendMessage(from, { text: mess.only.admin }, { quoted: msg });
+			return true;
+		}
+		
+		if (optionsCmd.isQuoted && !msg.quoted) {
+			await msg.reply(`Please reply message`);
+			return true;
+		}
+		
+		if (optionsCmd.isBotAdmin && !isBotGroupAdmins) {
+			await fdz.sendMessage(from, { text: mess.only.Badmin }, { quoted: msg });
+			return true;
+		}
+		
+		if (optionsCmd.isOwner && !isOwner) {
+			await fdz.sendMessage(from, { text: mess.only.ownerB}, { quoted: msg });
+			return true;
+		}
+		if (optionsCmd.isGroup && !isGroup) {
+			await fdz.sendMessage(from, { text: mess.only.group }, { quoted: msg });
+			return true;
+		}
+		
+    if (optionsCmd.query && !q) {
+			await msg.reply(
+				typeof optionsCmd.query == "boolean" && optionsCmd.query ? `Masukan query` : optionsCmd.query
+			);
+			return true;
+		}
+		
+		if (optionsCmd.wait) {
+			await fdz.sendMessage(
+				from,
+				{ text: typeof optionsCmd.wait == "string" ? optionsCmd.wait : mess.wait },
+				{ quoted: msg }
+			);
+		}
 		
 				try {
-				  await m.reply(mess.wait)
 			await cmd.run(
 				{ msg, fdz, from, fromMe, type, body,budy, mess},
 				{ quoted, mime, pushName, isGroup, botNumber,  isOwner, q, map, args, prefix: temp_pref, chat: m, command, groupMetadata, groupMembers,groupAdmins, isBotGroupAdmins, isGroupAdmins, isImage,isVideo,isSticker,isQuotedMsg,isQuotedImage,isQuotedAudio,isQuotedDocument,isQuotedVideo,isQuotedSticker,isviewOnce}
 			);
 		} catch (e) {
-			
+			console.error(util.format(e))
 			await fdz.sendMessage(ownerWa[0], {
 			text: util.format(e),
 		}, {

@@ -34,6 +34,10 @@ module.exports ={
   prefixbot : ".",
   ownerWa : ['6287877173955@s.whatsapp.net'],
   mongoURI: '',
+  stickerInfo : {
+		"author": "FERDIZ-AFK\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+		"pack": "BOT FERDIZ-AFK"
+	},
   config : {
     "ignore": {
       "directory": ["umum"]

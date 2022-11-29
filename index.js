@@ -101,6 +101,8 @@ const ReadFitur = () => {
 				isQuoted: false,
 				isGroup: false,
 				isBotAdmin: false,
+				query: false,
+				noPrefix: false,
 				isMedia: {
 					isQVideo: false,
 					isQAudio: false,
@@ -109,6 +111,7 @@ const ReadFitur = () => {
 					isQDocument: false,
 				},
 				disable: false,
+				isUrl: false,
 				run: () => {},
 			};
 			let cmd = utils.parseOptions(cmdOptions, command);
