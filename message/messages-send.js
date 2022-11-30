@@ -190,6 +190,31 @@ fdz.updateProfilePicture = async (jid, content) => {
 		}]
 	})
 }
+
+fdz.sendGroupV4Invite = async (
+		jid,
+		participant,
+		inviteCode,
+		inviteExpiration,
+		groupName = "unknown subject",
+		jpegThumbnail,
+		caption = "Invitation to join my WhatsApp group",
+		options = {}
+	) => {
+		let msg = proto.Message.fromObject({
+			groupInviteMessage: proto.GroupInviteMessage.fromObject({
+				inviteCode,
+				inviteExpiration: inviteExpiration ? parseInt(inviteExpiration) : +new Date(new Date() + 3 * 86400000),
+				groupJid: jid,
+				groupName: groupName ? groupName : (await fdz.groupMetadata(jid)).subject,
+				jpegThumbnail,
+				caption,
+			}),
+		});
+		const ms = generateWAMessageFromContent(participant, msg, options);
+		await fdz.relayMessage(participant, ms.message, { messageId: ms.key.id });
+	};
+
   
 fdz.cMod = (jid, copy, text = '', sender = fdz.user.id, options = {}) => {
 	//let copy = message.toJSON()

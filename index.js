@@ -178,6 +178,28 @@ const startfdz = async () => {
 			level: 'silent'
 		}),
 		printQRInTerminal: true,
+		//work tempelate message 
+		patchMessageBeforeSending: (message) => {
+                const requiresPatch = !!(
+                  message.buttonsMessage
+              	  || message.templateMessage
+              		|| message.listMessage
+                );
+                if (requiresPatch) {
+                    message = {
+                        viewOnceMessage: {
+                            message: {
+                                messageContextInfo: {
+                                    deviceListMetadataVersion: 2,
+                                    deviceListMetadata: {},
+                                },
+                                ...message,
+                            },
+                        },
+                    };
+                }
+                return message;
+    },
 		browser: ['bot-oni-chan', 'Safari', '1.0.0'],
 		auth: state,
 		markOnlineOnConnect: false
