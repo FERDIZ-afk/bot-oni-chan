@@ -52,9 +52,6 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		//console.log(m)
 		const content = JSON.stringify(mek.message)
 		const type = Object.keys(mek.message)[0];
-		1
-    
-    
 		global.dashboard = JSON.parse(fs.readFileSync("./database/dashboard.json"));
 		if (m && type == "protocolMessage") fdz.ev.emit("message.delete", m.message.protocolMessage.key);
 		const body = (type === 'conversation' && m.message.conversation) ? m.message.conversation : (type == 'imageMessage') && m.message.imageMessage.caption ? m.message.imageMessage.caption : (type == 'videoMessage') && m.message.videoMessage.caption ? m.message.videoMessage.caption : (type == 'extendedTextMessage') && m.message.extendedTextMessage.text ? m.message.extendedTextMessage.text : (type == 'listResponseMessage') && m.message.listResponseMessage.singleSelectReply.selectedRowId ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (type == 'buttonsResponseMessage') && m.message.buttonsResponseMessage.selectedButtonId ? m.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && m.message.templateButtonReplyMessage.selectedId ? m.message.templateButtonReplyMessage.selectedId : ''
