@@ -31,6 +31,7 @@ module.exports = {
 	isBotAdmin: true,
 	isAdmin: true,
 	async run({ msg, fdz }, { q, prefix }) {
+	  try{
 		add = q ? q : msg.quoted ? msg.quoted : false;
 		if (!add) return msg.reply("Example: " + prefix + "add 62728288");
 		q = msg.quoted ? msg.quoted.sender.split("@")[0] : q;
@@ -40,7 +41,7 @@ module.exports = {
 		  const jid = FormatToWhatsappJid(i);
 			i == " " ? "" : chunk.push(jid);
 		}
-		let participant = await fdz.groupParticipantsUpdate(msg.chat, chunk, "add");
+		let participant = await fdz.groupParticipantsUpdate(msg.chat, chunk, "add").catch((err) => msg.reply("ERROR TIDAK BISA MENAMBAHKAN USER BARU"));
 		await require("delay")(5000);
 		const cek = await fdz.groupMetadata(msg.chat);
 		if (global.statParticipant == true) {
@@ -74,7 +75,6 @@ module.exports = {
 		msg.reply('_✔ SUCCESS: Number added to group! ✔_');
 	}
 	}
-		
-		
-	}
+	} catch (err) {
+	}}
 	};

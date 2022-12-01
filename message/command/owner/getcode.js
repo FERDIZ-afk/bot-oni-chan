@@ -9,6 +9,5 @@ module.exports = {
 	async run({ msg, conn }, { isOwner, q, map, args }) {
 	  if (!require("fs").existsSync(q)) return msg.reply(`'${q}' tidak ditemukan!\n\n`)
     await msg.reply(require("fs").readFileSync(q, 'utf8'))
-	  
 	},
 };

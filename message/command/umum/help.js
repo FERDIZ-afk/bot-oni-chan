@@ -11,6 +11,7 @@ module.exports = {
 	name: "help",
 	alias: ["h", "cmd", "menu"],
 	category: "umum",
+	wait: true,
 	async run({ msg, fdz }, { q, owner, map, args }) {
 		if (q) {
 			const data = [];

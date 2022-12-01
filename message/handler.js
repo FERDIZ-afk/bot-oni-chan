@@ -57,8 +57,13 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
     
 		global.dashboard = JSON.parse(fs.readFileSync("./database/dashboard.json"));
 		if (m && type == "protocolMessage") fdz.ev.emit("message.delete", m.message.protocolMessage.key);
-		const body = (type === 'conversation' && m.message.conversation) ? m.message.conversation : (type == 'imageMessage') && m.message.imageMessage.caption ? m.message.imageMessage.caption : (type == 'videoMessage') && m.message.videoMessage.caption ? m.message.videoMessage.caption : (type == 'extendedTextMessage') && m.message.extendedTextMessage.text ? m.message.extendedTextMessage.text : (type == 'listResponseMessage') && m.message.listResponseMessage.singleSelectReply.selectedRowId ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (type == 'buttonsResponseMessage') && m.message.buttonsResponseMessage.selectedButtonId ? m.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && m.message.templateButtonReplyMessage.selectedId ? m.message.templateButtonReplyMessage.selectedId : ''
-
+		const body = m.body || (type === 'conversation' && m.message.conversation) ? m.message.conversation : (type == 'imageMessage') && m.message.imageMessage.caption ? m.message.imageMessage.caption :	(type == 'videoMessage') && m.message.videoMessage.caption ? m.message.videoMessage.caption : 	(type == 'extendedTextMessage') && m.message.extendedTextMessage.text ? m.message.extendedTextMessage.text : (type == 'listResponseMessage') && m.message.listResponseMessage.singleSelectReply.selectedRowId ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (type == 'buttonsResponseMessage') && m.message.buttonsResponseMessage.selectedButtonId ? m.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && m.message.templateButtonReplyMessage.selectedId ? m.message.templateButtonReplyMessage.selectedId : ''
+/*await fdz.sendMessage(ownerWa[0], {
+			text: util.format(body),
+		}, {
+			quoted: m
+		})
+		*/
 		var budy = (typeof m.text == 'string' ? m.text : '')
 
 		const fromMe = msg.key.fromMe
@@ -70,7 +75,6 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		const mime = (quoted.msg || quoted).mimetype || ''
 		
 		const command = body.trim().split(/ +/)[0]  // body.toLowerCase().split(' ')[0] || ''
-		const isCmd = budy.startsWith(prefix)
 
 		const pushName = msg.pushName
 		const isGroup = msg.key.remoteJid.endsWith('@g.us')
@@ -105,6 +109,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 
 
 		let temp_pref = multi_pref.test(body) ? body.split("").shift() : prefix;
+		const isCmd = body.startsWith(temp_pref);
 
 
   mess = {
@@ -182,29 +187,29 @@ if ( m.mtype == 'viewOnceMessage') {
 */
 
 		//Reply no prefix
-	  if (budy == "P") {
+	  if (body == "P") {
 	    await delay(500)
 			await m.reply("*pa pe pa pe* \nketik *mode* kak buat tahu\nmode bot saat ini\nketik *prefix* kak buat tahu\nprefix / awalan command bot saat ini ")
-		} else if (budy == "p") {
+		} else if (body == "p") {
 		  await delay(500)
 			await m.reply("*pa pe pa pe* \nketik *mode* kak buat tahu\nmode bot saat ini\nketik *prefix* kak buat tahu\nprefix / awalan command bot saat ini ")
-		} else if (budy == "prefix") {
+		} else if (body == "prefix") {
 		  await delay(500)
 			await m.reply(` *Prefix saat ini:* ${prefix}\n prefix adalah awal\ndari suatu command untuk bot.\n\n*contoh* *:* ${prefix}menu \n\ningat perhatikan juga spasi dan besar kecil ngak nya awalan huruf`)
-		} else if (budy == "Prefix") {
+		} else if (body == "Prefix") {
 		  await delay(500)
 			await m.reply(` *Prefix saat ini:* ${prefix}\n prefix adalah awal\ndari suatu command untuk bot.\n\n*contoh* *:* ${prefix}menu \n\ningat perhatikan juga spasi dan besar kecil ngak nya awalan huruf`)
-		} else if (budy == "makasihya") {
+		} else if (body == "makasihya") {
 		  await delay(500)
 			await m.reply(" *sama sama 🥰* ")
-		} else if (budy == "Makasihya") {
+		} else if (body == "Makasihya") {
 		  await delay(500)
 			await m.reply(" *sama sama 🥰* ")
-		} else if (budy == "info") {
+		} else if (body == "info") {
 		  await delay(500)
 		   var teks = await infobot(fdz, sender, prefix, pushName)
       await  m.reply(teks)
-    } else if (budy == "Info") {
+    } else if (body == "Info") {
 		  await delay(500)
 		   var teks = await infobot(fdz, sender, prefix, pushName)
       await  m.reply(teks)
@@ -316,10 +321,10 @@ if (m.message && !m.key.fromMe ) {
 	    if (!isGroup && isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(command), 'dari', color(sender.split('@')[0]), 'args :', color(args.length))
     if (isCmd && isGroup) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, 'message', color(command), 'nomor', color(sender.split('@')[0]), 'Dari grup', color(groupName), 'args :', color(args.length))
    
-             if (!isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ PRIVATE ]", "aqua"), color(budy || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
-            if (isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[  GROUP  ]", "aqua"), color(budy || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
-            if (!isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(budy || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
-            if (isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(budy || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
+             if (!isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ PRIVATE ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
+            if (isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[  GROUP  ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
+            if (!isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
+            if (isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
         }
 		
 
@@ -478,8 +483,8 @@ default:
 
 		console.error(util.format(err))
 		//console.error(util.format(m))
-		fdz.sendMessage(m.sender, {
-			text: util.format(err),
+		await fdz.sendMessage(ownerWa[0], {
+			text: util.format(e),
 		}, {
 			quoted: m
 		})
