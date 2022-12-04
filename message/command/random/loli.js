@@ -2,9 +2,9 @@ module.exports = {
 	name: "loli",
 	alias: ["randomloli", "lolianime"],
 	category: "random",
-	isSpam: true,
+	wait: true,
 	async run({ msg, fdz },{prefix}) {
-		await msg.reply("wait");
+		
 		const buttons = [{ buttonId: prefix+"loli", buttonText: { displayText: "Get Again" }, type: 1 }];
 		const buttonMessage = {
 			image: { url: (await rzky.image.loli()).url },

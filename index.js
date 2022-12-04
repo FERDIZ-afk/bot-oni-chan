@@ -157,7 +157,7 @@ const startfdz = async () => {
 	const {
 		state,
 		saveCreds
-	} = await useMultiFileAuthState('auth') //useMultiFileAuthState('auth')
+	} = await useMultiFileAuthState('auth')
 	// fetch latest version of WA Web
 	const {
 		version,
@@ -202,7 +202,7 @@ const startfdz = async () => {
     },
 		browser: ['bot-oni-chan', 'Safari', '1.0.0'],
 		auth: state,
-		markOnlineOnConnect: false
+	//	markOnlineOnConnect: false
 		//msgRetryCounterMap
 	})
   const fdz = sendmessages(sock,store)
@@ -275,7 +275,6 @@ store.bind(fdz.ev)
 			mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
 			//		if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
 			var m = modulewa(fdz, mek, store)
-			//		m.isBaileys = m.key.id.startsWith('BAE5') || m.key.id.startsWith('3EB0')
 			require('./message/handler.js')(fdz, m, mek, chatUpdate, store, attribute)
 		} catch (err) {
 			//console.log(JSON.stringify(err, undefined, 2))

@@ -37,6 +37,7 @@ global.dbchatpesan = dbs
 const { color } = require('../lib/color')
 const { prefixbot, ownerWa } = require('../config/settings')
 const { infobot } = require("../config/botrespon")
+const PollUpdateDecrypt = require('../lib/PollUpdateDecrypt')
 
 const prefix = prefixbot
 const multi_pref = new RegExp("^[" + "!#%&?/;:,.~-+=".replace(/[|\\{}()[\]^$+*?.\-\^]/g, "\\$&") + "]");
@@ -49,7 +50,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 			id: msg.key.id,
 			msg
 		});
-		//console.log(m)
+	//	console.log(m)
 		const content = JSON.stringify(mek.message)
 		const type = Object.keys(mek.message)[0];
 		1
@@ -58,12 +59,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		global.dashboard = JSON.parse(fs.readFileSync("./database/dashboard.json"));
 		if (m && type == "protocolMessage") fdz.ev.emit("message.delete", m.message.protocolMessage.key);
 		const body = m.body || (type === 'conversation' && m.message.conversation) ? m.message.conversation : (type == 'imageMessage') && m.message.imageMessage.caption ? m.message.imageMessage.caption :	(type == 'videoMessage') && m.message.videoMessage.caption ? m.message.videoMessage.caption : 	(type == 'extendedTextMessage') && m.message.extendedTextMessage.text ? m.message.extendedTextMessage.text : (type == 'listResponseMessage') && m.message.listResponseMessage.singleSelectReply.selectedRowId ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (type == 'buttonsResponseMessage') && m.message.buttonsResponseMessage.selectedButtonId ? m.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && m.message.templateButtonReplyMessage.selectedId ? m.message.templateButtonReplyMessage.selectedId : ''
-/*await fdz.sendMessage(ownerWa[0], {
-			text: util.format(body),
-		}, {
-			quoted: m
-		})
-		*/
+
 		var budy = (typeof m.text == 'string' ? m.text : '')
 
 		const fromMe = msg.key.fromMe
@@ -78,6 +74,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 
 		const pushName = msg.pushName
 		const isGroup = msg.key.remoteJid.endsWith('@g.us')
+		const isPrivate = msg.key.remoteJid.endsWith("@s.whatsapp.net");
 
 		const sender = m.sender //isGroup ? (msg.key.participant ? msg.key.participant : msg.participant) : msg.key.remoteJid
 		const botNumber = fdz.decodeJid(fdz.user.id) || fdz.user.id.split(':')[0] + '@s.whatsapp.net' || fdz.user.jid
@@ -112,21 +109,26 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		const isCmd = body.startsWith(temp_pref);
 
 
-  mess = {
-    				wait: '⌛ Sedang di proses「 ⏳ 」',
-    				success: '✔️ Berhasil ✔️',
-    				error: {
-    					stick: '❌ Gagal, terjadi kesalahan saat mengkonversi gambar ke sticker ❌',
-    					Iv: '❌ Link tidak valid ❌'
-    				},
-    				only: {
-    					group: '❌ Perintah ini hanya bisa di gunakan dalam group! ❌',
-    					ownerG: '❌ Perintah ini hanya bisa di gunakan oleh owner group! ❌',
-    					ownerB: '❌ Perintah ini hanya bisa di gunakan oleh owner bot! ❌',
-    					admin: '❌ Perintah ini hanya bisa di gunakan oleh admin group! ❌',
-    					Badmin: '❌ Perintah ini hanya bisa di gunakan ketika bot menjadi admin! ❌'
-    				}
-    			}
+    mess = {
+    		wait: '⌛ Sedang di proses「 ⏳ 」',
+    		success: '✔️ Berhasil ✔️',
+    		error: {
+    			stick: '❌ Gagal, terjadi kesalahan saat mengkonversi gambar ke sticker ❌',
+   				Iv: '❌ Link tidak valid ❌',
+       		api: "Sorry an error occurred"
+    		},
+    		only: {
+    			group: '❌ Perintah ini hanya bisa di gunakan dalam group! ❌',
+   				privateB: '❌ Perintah ini hanya bisa di gunakan dalam chat private! ❌',
+   				ownerG: '❌ Perintah ini hanya bisa di gunakan oleh owner group! ❌',
+   				ownerB: '❌ Perintah ini hanya bisa di gunakan oleh owner bot! ❌',
+   				admin: '❌ Perintah ini hanya bisa di gunakan oleh admin group! ❌',
+   				Badmin: '❌ Perintah ini hanya bisa di gunakan ketika bot menjadi admin! ❌'
+    		}
+ 		}
+
+
+
 
 
 /*
@@ -215,7 +217,7 @@ if ( m.mtype == 'viewOnceMessage') {
       await  m.reply(teks)
     }
 
-				const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
+		const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
 		const cmd =
 			map.command.get(body.trim().split(/ +/).shift().toLowerCase()) ||
 			[...map.command.values()].find((x) =>
@@ -317,18 +319,18 @@ if ( m.mtype == 'viewOnceMessage') {
 
 if (m.message && !m.key.fromMe ) {
       //      fdz.sendReadReceipt(m.chat, m.sender, [m.key.id])
-            fdz.readMessages([m.key])
-	    if (!isGroup && isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(command), 'dari', color(sender.split('@')[0]), 'args :', color(args.length))
+    fdz.readMessages([m.key])
+	  if (!isGroup && isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(command), 'dari', color(sender.split('@')[0]), 'args :', color(args.length))
     if (isCmd && isGroup) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, 'message', color(command), 'nomor', color(sender.split('@')[0]), 'Dari grup', color(groupName), 'args :', color(args.length))
    
-             if (!isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ PRIVATE ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
-            if (isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[  GROUP  ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
-            if (!isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
-            if (isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
-        }
+    if (!isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ PRIVATE ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
+    if (isGroup && !isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[  GROUP  ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
+    if (!isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"))
+    if (isGroup && isCmd) console.log(color(moment(msg.messageTimestamp * 1000).format('DD/MM/YY HH:mm:ss'), "white"), color("[ COMMAND ]", "aqua"), color(body || type, "white"), "dari", color(sender.split('@')[0], "yellow"), "group", color(groupName, "yellow"))
+}
 		
 
-if (!cmd) return;
+    if (!cmd) return;
 
 		let optionsCmd = cmd.options;
 		if (optionsCmd.noPrefix) {
@@ -382,6 +384,16 @@ if (!cmd) return;
 			);
 			return true;
 		}
+		
+		if (optionsCmd.disable) {
+			await fdz.sendMessage(
+				from,
+				{ text: typeof optionsCmd.wait == "string" ? optionsCmd.wait : "untuk sementara fitur sedang maintenance" },
+				{ quoted: msg }
+			);
+			return true;
+		}
+		
 		
 		if (optionsCmd.wait) {
 			await fdz.sendMessage(
@@ -476,13 +488,9 @@ default:
 		
 		
 
-		///	console.log(ownerbot)
 	} catch (err) {
 		e = String(err);
-		
-
 		console.error(util.format(err))
-		//console.error(util.format(m))
 		await fdz.sendMessage(ownerWa[0], {
 			text: util.format(e),
 		}, {
