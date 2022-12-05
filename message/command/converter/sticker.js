@@ -3,6 +3,8 @@ const {
 } = require('@adiwajshing/baileys')
 const fs = require("fs")
 
+const { stickerInfo } = require('../../../config/settings')
+
 module.exports = {
 	name: "sticker",
 	alias: [
@@ -25,8 +27,8 @@ module.exports = {
 	if (!quoted) throw msg.reply(`Balas Video/Image Dengan Caption ${command}`)
 	if (/webp/.test(mime)) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
 	anu = args.join(' ').split('|')
-	satu = anu[0] !== '' ? anu[0] : "packname"
-	dua = typeof anu[1] !== 'undefined' ? anu[1] : "author"
+	satu = anu[0] !== '' ? anu[0] : stickerInfo.packname
+	dua = typeof anu[1] !== 'undefined' ? anu[1] : stickerInfo.author
 
 	if (/image/.test(mime)) {
 

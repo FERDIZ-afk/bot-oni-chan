@@ -39,6 +39,7 @@ module.exports = {
 
 			for (let cmd of cmds) {
 				let info = command.get(cmd);
+			  var totpitur = Object.values([...map.command]).length
 				if (!cmd) continue;
 				if (config.ignore.directory.includes(info.category.toLowerCase())) continue;
 				cteg = info.category || "No Category";
@@ -65,6 +66,9 @@ module.exports = {
 ◪ *INFO USER*
 ❏ Nomer: 「  ${msg.sender.split("@")[0]} 」
 ❏ Nama: 「  ${fdz.getName(msg.sender)} 」
+
+◪ *Total Fitur saat ini Termasuk ${prefix}menu/help*
+❏ ${totpitur}
 
 ◪ *Fitur terpopuler saat ini*
 ${

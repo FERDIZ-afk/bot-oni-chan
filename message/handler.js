@@ -127,56 +127,10 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
     		}
  		}
 
-
-
-
-
-/*
-if ( m.mtype == 'viewOnceMessage') {
-  
-  try {
-   // console.log(m)
-  let teks = `「 *Anti ViewOnce Message* 」
-      
-🤠 *Name* : ${m.pushName}
-👾 *User* : wa.me//${m.sender.split("@")[0]}
-⏰ *Clock* : ${moment.tz('Asia/Jakarta').format('HH:mm:ss')} WIB
-      
-💫 *MessageType* : ${m.mtype}`
-    m.msg.caption = teks + "\n\n\n💬 *CAPTION* : \n\n"+ m.msg.caption
-
-  await delay(500)
-  m.copyNForward(m.chat, true, {
-  readViewOnce: true
-  }, {
-//	mentionedJid: j
-  quoted: m
-  }) //.catch(_ => m.reply('Mungkin dah pernah dibuka bot'))
-  } catch (err) {
-		console.error(util.format(err))
-		//console.error(util.format(m))
-		fdz.sendMessage(m.sender, {
-			text: util.format(err),
-		}, {
-			quoted: m
-		})
-	}
-  
-  
-}
-	*/
 	
-	/*
-	if ( m.mtype == 'viewOnceMessage') {
+	if ( m.mtype == 'viewOnceMessage' && m.msg.viewOnce) {
   try {
-		messagee = { ...msg };
-		messagee.message[Object.keys(msg.message)[0]].viewOnce = false;
-		const opt = {
-			remoteJid: m.key.remoteJid,
-			participant: m.sender,
-			message: messagee,
-		};
-		fdz.ev.emit("viewOnceMessage", opt);
+		fdz.ev.emit("viewOnceMessage", m);
   } catch (err) {
 		console.error(util.format(err))
 		//console.error(util.format(m))
@@ -186,7 +140,7 @@ if ( m.mtype == 'viewOnceMessage') {
 			quoted: m
 		})
 	}}
-*/
+
 
 		//Reply no prefix
 	  if (body == "P") {
@@ -360,7 +314,7 @@ if (m.message && !m.key.fromMe ) {
 		}
 		
 		if (optionsCmd.isQuoted && !msg.quoted) {
-			await msg.reply(`Please reply message`);
+			await msg.reply(`Please reply message sesuai type pesan tersebut`);
 			return true;
 		}
 		

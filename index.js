@@ -293,12 +293,12 @@ store.bind(fdz.ev)
 	fdz.ev.on("message.delete", async (json) => {
 		require('./ivents/message-delete.js')(fdz, json)
 	})
-  /*
+  
   fdz.ev.on("viewOnceMessage", async (json) => {
-		console.log(json)
+//		console.log(json)
 		require('./ivents/messages-viewone.js')(fdz,json)
 	})
-	*/
+	
 	
   fdz.ev.on("messages.reaction", async (json) => {
 		require('./ivents/messages-reaction.js')(fdz, store, json)
