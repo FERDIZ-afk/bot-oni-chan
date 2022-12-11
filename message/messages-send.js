@@ -313,7 +313,7 @@ fdz.downloadAndSaveMediaMessage = async (message, filename, attachExtension = tr
 		buffer = Buffer.concat([buffer, chunk])
 	}
 	let type = await FileType.fromBuffer(buffer)
-	trueFileName = attachExtension ? (filename + '.' + type.ext) : filename
+	trueFileName = attachExtension ? (`./tmp/`+filename + '.' + type.ext) : `./tmp/`+filename
 			// save to file
 	await fs.writeFileSync(trueFileName, buffer)
 	return trueFileName

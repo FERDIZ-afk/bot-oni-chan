@@ -1,6 +1,6 @@
 module.exports = {
 	name: "hidetag",
-	alias: ["ht"],
+	alias: ["ht","hdt","texttag"],
 	category: "group",
 	isAdmin: true,
 	isGroup: true,

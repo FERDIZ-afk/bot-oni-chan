@@ -22,10 +22,10 @@ let teks = `「 *Anti ViewOnce Message* 」
    m.msg.caption = teks + "\n\n\n💬 *CAPTION* : \n\n"+ m.msg.caption
 
   await delay(500)
+  
   m.copyNForward(m.chat, true, {
-  readViewOnce: true 
-  }, {
-  quoted: m
+  readViewOnce: true,
+    quoted: m
   })
 
 			} catch (err) {

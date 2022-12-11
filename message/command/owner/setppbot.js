@@ -10,7 +10,7 @@ module.exports = {
 	if (!quoted) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
 	if (!/image/.test(mime)) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
 	if (/webp/.test(mime)) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
-	let media = await fdz.downloadAndSaveMediaMessage(quoted)
+	let media = await fdz.downloadMediaMessage(quoted)
 	await fdz.updateProfilePicture(botNumber, media).then(() => msg.reply('Success update profile picture bot')).catch(msg.reply)
 	},
 };

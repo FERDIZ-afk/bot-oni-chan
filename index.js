@@ -270,12 +270,15 @@ store.bind(fdz.ev)
 
 	fdz.ev.on('messages.upsert', async chatUpdate => {
 		try {
-			mek = chatUpdate.messages[0]
+//			mek = chatUpdate.messages[0]
+		for (let mek of chatUpdate.messages) {
 			if (!mek.message) return
 			mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
+      if (mek.key && mek.key.remoteJid === 'status@broadcast') return
 			//		if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
 			var m = modulewa(fdz, mek, store)
 			require('./message/handler.js')(fdz, m, mek, chatUpdate, store, attribute)
+		}
 		} catch (err) {
 			//console.log(JSON.stringify(err, undefined, 2))
 		}

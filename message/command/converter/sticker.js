@@ -24,10 +24,10 @@ module.exports = {
 	async run({ msg, fdz }, { quoted, args, mime, command }) {
 	  
 	  
-	if (!quoted) throw msg.reply(`Balas Video/Image Dengan Caption ${command}`)
+	if (!quoted) return msg.reply(`Balas Video/Image Dengan Caption ${command}`)
 	if (/webp/.test(mime)) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
 	anu = args.join(' ').split('|')
-	satu = anu[0] !== '' ? anu[0] : stickerInfo.packname
+	satu = anu[0] !== '' ? anu[0] : stickerInfo.pack
 	dua = typeof anu[1] !== 'undefined' ? anu[1] : stickerInfo.author
 
 	if (/image/.test(mime)) {
@@ -52,7 +52,7 @@ module.exports = {
 		
 		//
 	} else {
-		throw msg.reply(`Kirim Gambar/Video Dengan Caption ${command}\nDurasi Video 1-9 Detik`)
+		return msg.reply(`Kirim Gambar/Video Dengan Caption ${command}\nDurasi Video 1-9 Detik`)
 	}
 	 
 	}

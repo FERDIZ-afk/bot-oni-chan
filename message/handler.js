@@ -294,19 +294,8 @@ if (m.message && !m.key.fromMe ) {
 			if (!isCmd) return;
 		}
 		
-		/*
-		if (cmd && cmd.category != "private") {
-			let comand = dashboard.find((command) => command.name == cmd.name);
-			if (comand) {
-				comand.success += 1;
-				comand.lastUpdate = Date.now();
-				fs.writeFileSync("./database/dashboard.json", JSON.stringify(dashboard));
-			} else {
-				dashboard.push({ name: cmd.name, success: 1, failed: 0, lastUpdate: Date.now() })
-				fs.writeFileSync("./database/dashboard.json"), JSON.stringify(dashboard));
-			}
-		}
-		*/
+		
+		
 		
 		if (optionsCmd.isAdmin && !isGroupAdmins) {
 			await fdz.sendMessage(from, { text: mess.only.admin }, { quoted: msg });
@@ -362,7 +351,38 @@ if (m.message && !m.key.fromMe ) {
 				{ msg, fdz, from, fromMe, type, body,budy, mess},
 				{ quoted, mime, pushName, isGroup, botNumber,  isOwner, q, map, args, prefix: temp_pref, chat: m, command, groupMetadata, groupMembers,groupAdmins, isBotGroupAdmins, isGroupAdmins, isImage,isVideo,isSticker,isQuotedMsg,isQuotedImage,isQuotedAudio,isQuotedDocument,isQuotedVideo,isQuotedSticker,isviewOnce}
 			);
+			
+		if (cmd && cmd.category != "private") {
+			let comand = dashboard.find((command) => command.name == cmd.name);
+			console.log(comand)
+			
+		if (comand) {
+				comand.success += 1;
+				comand.lastUpdate = Date.now();
+				fs.writeFileSync("./database/dashboard.json", JSON.stringify(dashboard));
+		} else {
+			  try {
+			  let data = JSON.parse(fs.readFileSync("./database/dashboard.json"))
+			  var isian = { name: cmd.name, success: 1, failed: 0, lastUpdate: Date.now() }
+				data.push(isian)
+			//	console.log(data)
+			  fs.writeFileSync("./database/dashboard.json", JSON.stringify(data, null, 2));
+		  	} catch (err) {
+					console.log(`${err}`)
+				}
+		}
+		}
+			
 		} catch (e) {
+		  
+		  if (cmd.category != "private") {
+				let fail = dashboard.find((command) => command.name == cmd.name);
+				fail.failed += 1;
+				fail.success -= 1;
+				fail.lastUpdate = Date.now();
+				fs.writeFileSync("./database/dashboard.json", JSON.stringify(dashboard));
+			}
+		  
 			console.error(util.format(e))
 			await fdz.sendMessage(ownerWa[0], {
 			text: util.format(e),
