@@ -170,42 +170,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		   var teks = await infobot(fdz, sender, prefix, pushName)
       await  m.reply(teks)
     }
-
-		const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
-		const cmd =
-			map.command.get(body.trim().split(/ +/).shift().toLowerCase()) ||
-			[...map.command.values()].find((x) =>
-				x.alias.find((x) => x.toLowerCase() == body.trim().split(/ +/).shift().toLowerCase())
-			) ||
-			map.command.get(cmdName) ||
-			[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == cmdName));
-		if (isCmd && !cmd) {
-			var data = [...map.command.keys()];
-			[...map.command.values()]
-				.map((x) => x.alias)
-				.join(" ")
-				.replace(/ +/gi, ",")
-				.split(",")
-				.map((a) => data.push(a));
-			var result = rzky.tools.detectTypo(cmdName, data);
-			if (result.status != 200) return;
-			teks = `Maybe this is what you mean?\n\n`;
-			angka = 1;
-			if (typeof result.result == "object" && typeof result.result != "undefined") {
-				for (let i of result.result) {
-					var alias =
-						[...map.command.values()].find((x) => x.name == i.teks) ||
-						[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == i.teks));
-					teks += `*${angka++}. ${map.prefix}${i.teks}*\n`;
-					teks += `Alias: *${alias.alias.join(", ")}*\n`;
-					teks += `Accuracy: *${i.keakuratan}*\n\n`;
-				}
-				teks += `If true, please re-command!`;
-				await msg.reply(teks);
-			}
-		}
-
-
+    
 		if (isOwner) {
 			if (budy.startsWith(">")) {
 				if (!isOwner) return m.reply(mess.only.ownerB)
@@ -268,6 +233,42 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 				}
 			}
 		}
+
+		const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
+		const cmd =
+			map.command.get(body.trim().split(/ +/).shift().toLowerCase()) ||
+			[...map.command.values()].find((x) =>
+				x.alias.find((x) => x.toLowerCase() == body.trim().split(/ +/).shift().toLowerCase())
+			) ||
+			map.command.get(cmdName) ||
+			[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == cmdName));
+		if (isCmd && !cmd) {
+			var data = [...map.command.keys()];
+			[...map.command.values()]
+				.map((x) => x.alias)
+				.join(" ")
+				.replace(/ +/gi, ",")
+				.split(",")
+				.map((a) => data.push(a));
+			var result = rzky.tools.detectTypo(cmdName, data);
+			if (result.status != 200) return;
+			teks = `Maybe this is what you mean?\n\n`;
+			angka = 1;
+			if (typeof result.result == "object" && typeof result.result != "undefined") {
+				for (let i of result.result) {
+					var alias =
+						[...map.command.values()].find((x) => x.name == i.teks) ||
+						[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == i.teks));
+					teks += `*${angka++}. ${map.prefix}${i.teks}*\n`;
+					teks += `Alias: *${alias.alias.join(", ")}*\n`;
+					teks += `Accuracy: *${i.keakuratan}*\n\n`;
+				}
+				teks += `If true, please re-command!`;
+				await msg.reply(teks);
+			}
+		}
+
+
 		
 		
 
