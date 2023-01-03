@@ -4,6 +4,9 @@ const {
 const fs = require("fs")
 
 const { stickerInfo } = require('../../../config/settings')
+const {
+	getRandom
+} = require("../../../lib/function.js")
 
 module.exports = {
 	name: "sticker",
@@ -23,8 +26,7 @@ module.exports = {
 	wait: true,
 	async run({ msg, fdz }, { quoted, args, mime, command }) {
 	  
-	  
-	if (!quoted) return msg.reply(`Balas Video/Image Dengan Caption ${command}`)
+	if (!quoted) return msg.reply(`Kirim/Reply Video/Image Dengan Caption ${command}`)
 	if (/webp/.test(mime)) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
 	anu = args.join(' ').split('|')
 	satu = anu[0] !== '' ? anu[0] : stickerInfo.pack
@@ -32,23 +34,29 @@ module.exports = {
 
 	if (/image/.test(mime)) {
 
-		let media = await fdz.downloadAndSaveMediaMessage(quoted) //quoted.download()
+  	hmm = await './tmp/simage-' + getRandom('.png')
+  	let media = await fdz.downloadAndSaveMediaMessage(quoted, hmm)
+	
 		await delay(500)
+		
 		let encmedia = await fdz.sendImageAsSticker(msg.chat, media, msg, {
 			packname: satu,
 			author: dua
 		})
-		await fs.unlinkSync(encmedia)
+
+		await fs.unlinkSync(media)
 	} else if (/video/.test(mime)) {
 
 		if ((quoted.msg || quoted).seconds > 11) return msg.reply('Maksimal 10 detik!')
-		let media = await fdz.downloadAndSaveMediaMessage(quoted)
+  	hmm = await './tmp/sgif-' + getRandom('.mp4')
+  	let media = await fdz.downloadAndSaveMediaMessage(quoted, hmm)
 		await delay(500)
 		let encmedia = await fdz.sendVideoAsSticker(msg.chat, media, msg, {
 			packname: satu,
 			author: dua
 		})
-		await fs.unlinkSync(encmedia)
+		
+		await fs.unlinkSync(media)
 		
 		//
 	} else {

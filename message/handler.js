@@ -37,7 +37,6 @@ global.dbchatpesan = dbs
 const { color } = require('../lib/color')
 const { prefixbot, ownerWa } = require('../config/settings')
 const { infobot } = require("../config/botrespon")
-const PollUpdateDecrypt = require('../lib/PollUpdateDecrypt')
 
 const prefix = prefixbot
 const multi_pref = new RegExp("^[" + "!#%&?/;:,.~-+=".replace(/[|\\{}()[\]^$+*?.\-\^]/g, "\\$&") + "]");
@@ -106,7 +105,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 
 
 		let temp_pref = multi_pref.test(body) ? body.split("").shift() : prefix;
-		const isCmd = body.startsWith(temp_pref);
+		const isCmd = body.startsWith(prefix);
 
 
     mess = {
@@ -141,6 +140,19 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		})
 	}}
 
+	if ( m.mtype == 'pollUpdateMessage') {
+  try {
+    	console.log(util.format(m))
+    	//console.log(util.format(m.message.pollUpdateMessage))
+  } catch (err) {
+		console.error(util.format(err))
+		//console.error(util.format(m))
+		fdz.sendMessage(m.sender, {
+			text: util.format(err),
+		}, {
+			quoted: m
+		})
+	}}
 
 		//Reply no prefix
 	  if (body == "P") {
@@ -170,7 +182,17 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		   var teks = await infobot(fdz, sender, prefix, pushName)
       await  m.reply(teks)
     }
-    
+
+		const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
+		const cmd =
+			map.command.get(body.trim().split(/ +/).shift().toLowerCase()) ||
+			[...map.command.values()].find((x) =>
+				x.alias.find((x) => x.toLowerCase() == body.trim().split(/ +/).shift().toLowerCase())
+			) ||
+			map.command.get(cmdName) ||
+			[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == cmdName));
+
+
 		if (isOwner) {
 			if (budy.startsWith(">")) {
 				if (!isOwner) return m.reply(mess.only.ownerB)
@@ -233,42 +255,6 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 				}
 			}
 		}
-
-		const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
-		const cmd =
-			map.command.get(body.trim().split(/ +/).shift().toLowerCase()) ||
-			[...map.command.values()].find((x) =>
-				x.alias.find((x) => x.toLowerCase() == body.trim().split(/ +/).shift().toLowerCase())
-			) ||
-			map.command.get(cmdName) ||
-			[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == cmdName));
-		if (isCmd && !cmd) {
-			var data = [...map.command.keys()];
-			[...map.command.values()]
-				.map((x) => x.alias)
-				.join(" ")
-				.replace(/ +/gi, ",")
-				.split(",")
-				.map((a) => data.push(a));
-			var result = rzky.tools.detectTypo(cmdName, data);
-			if (result.status != 200) return;
-			teks = `Maybe this is what you mean?\n\n`;
-			angka = 1;
-			if (typeof result.result == "object" && typeof result.result != "undefined") {
-				for (let i of result.result) {
-					var alias =
-						[...map.command.values()].find((x) => x.name == i.teks) ||
-						[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == i.teks));
-					teks += `*${angka++}. ${map.prefix}${i.teks}*\n`;
-					teks += `Alias: *${alias.alias.join(", ")}*\n`;
-					teks += `Accuracy: *${i.keakuratan}*\n\n`;
-				}
-				teks += `If true, please re-command!`;
-				await msg.reply(teks);
-			}
-		}
-
-
 		
 		
 
@@ -347,43 +333,83 @@ if (m.message && !m.key.fromMe ) {
 			);
 		}
 		
-				try {
-			await cmd.run(
-				{ msg, fdz, from, fromMe, type, body,budy, mess},
-				{ quoted, mime, pushName, isGroup, botNumber,  isOwner, q, map, args, prefix: temp_pref, chat: m, command, groupMetadata, groupMembers,groupAdmins, isBotGroupAdmins, isGroupAdmins, isImage,isVideo,isSticker,isQuotedMsg,isQuotedImage,isQuotedAudio,isQuotedDocument,isQuotedVideo,isQuotedSticker,isviewOnce}
-			);
-			
-		if (cmd && cmd.category != "private") {
-			let comand = dashboard.find((command) => command.name == cmd.name);
-			console.log(comand)
-			
-		if (comand) {
-				comand.success += 1;
-				comand.lastUpdate = Date.now();
-				fs.writeFileSync("./database/dashboard.json", JSON.stringify(dashboard));
-		} else {
-			  try {
-			  let data = JSON.parse(fs.readFileSync("./database/dashboard.json"))
-			  var isian = { name: cmd.name, success: 1, failed: 0, lastUpdate: Date.now() }
-				data.push(isian)
-			//	console.log(data)
-			  fs.writeFileSync("./database/dashboard.json", JSON.stringify(data, null, 2));
-		  	} catch (err) {
-					console.log(`${err}`)
+		try {
+			await cmd.run({
+				msg: m,
+				fdz,
+				from,
+				fromMe,
+				type,
+				body,
+				budy,
+				mess,
+				cmdName,
+				cmd
+			}, {
+				quoted,
+				mime,
+				pushName,
+				isGroup,
+				botNumber,
+				isOwner,
+				q,
+				map,
+				args,
+				prefix: temp_pref,
+				command,
+				groupMetadata,
+				groupMembers,
+				groupAdmins,
+				isBotGroupAdmins,
+				isGroupAdmins,
+				isImage,
+				isVideo,
+				isSticker,
+				isQuotedMsg,
+				isQuotedImage,
+				isQuotedAudio,
+				isQuotedDocument,
+				isQuotedVideo,
+				isQuotedSticker,
+				isviewOnce
+			});
+
+			if (cmd && cmd.category != "private") {
+				let comand = dashboard.find((command) => command.name == cmd.name);
+				console.log(comand)
+
+				if (comand) {
+					comand.success += 1;
+					comand.lastUpdate = Date.now();
+					fs.writeFileSync("./database/dashboard.json", JSON.stringify(dashboard));
+				} else {
+					try {
+						let data = JSON.parse(fs.readFileSync("./database/dashboard.json"))
+						var isian = {
+							name: cmd.name,
+							success: 1,
+							failed: 0,
+							lastUpdate: Date.now()
+						}
+						data.push(isian)
+						//	console.log(data)
+						fs.writeFileSync("./database/dashboard.json", JSON.stringify(data, null, 2));
+					} catch (err) {
+						console.log(`${err}`)
+					}
 				}
-		}
-		}
-			
+			}
+
 		} catch (e) {
-		  
-		  if (cmd.category != "private") {
+		  /*
+			if (cmd.category != "private") {
 				let fail = dashboard.find((command) => command.name == cmd.name);
 				fail.failed += 1;
 				fail.success -= 1;
 				fail.lastUpdate = Date.now();
 				fs.writeFileSync("./database/dashboard.json", JSON.stringify(dashboard));
 			}
-		  
+		  */
 			console.error(util.format(e))
 			await fdz.sendMessage(ownerWa[0], {
 			text: util.format(e),
@@ -395,7 +421,6 @@ if (m.message && !m.key.fromMe ) {
 		/*
 		
 switch (command) {
-  
 //Owner Menu
 case prefix + 'restart': {
 	if (!isOwner) throw m.reply(mess.only.ownerB)
@@ -464,10 +489,9 @@ default:
 		
 
 	} catch (err) {
-		e = String(err);
 		console.error(util.format(err))
 		await fdz.sendMessage(ownerWa[0], {
-			text: util.format(e),
+			text: util.format(err),
 		}, {
 			quoted: m
 		})

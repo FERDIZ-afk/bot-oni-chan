@@ -17,7 +17,7 @@ module.exports = {
 	let teks = `⬣ *LIST GROUP CHAT*\n\nTotal Group : ${anu.length} Group\n\n`
 	for (let i of anu) {
 		let metadata = await fdz.groupMetadata(i)
-		teks += `⬡ *Nama :* ${metadata.subject}\n⬡ *Owner :* ${metadata.owner !== undefined ? "@"+metadata.owner.split("@")[0] : '-'}\n⬡ *ID :* ${metadata.id}\n⬡ *Dibuat :* ${moment(metadata.creation * 1000).tz('Asia/Jakarta').format('Ddddd,D/MM/YYYY HH:mm:ss')}\n⬡ *Member :* ${metadata.participants.length}\n\n────────────────────────\n\n`
+		teks += `⬡ *Nama :* ${metadata.subject}\n⬡ *Owner :* ${metadata.owner !== undefined ? "@"+metadata.owner.split("@")[0] : '-'}\n⬡ *ID :* ${metadata.id}\n⬡ *Dibuat :* ${moment(metadata.creation * 1000).tz('Asia/Jakarta').format('ddd, D/MM/YYYY HH:mm:ss')}\n⬡ *Group change name :* ${moment(metadata.subjectTime * 1000).tz('Asia/Jakarta').format('ddd, D/MM/YYYY HH:mm:ss')}\n⬡ *Member :* ${metadata.participants.length}\n\n────────────────────────\n\n`
 	}
 
 	msg.reply(teks)

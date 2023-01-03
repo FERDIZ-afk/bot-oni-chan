@@ -5,7 +5,7 @@
 */
 
 qrwa = null
-PORT = process.env.PORT || 3000
+PORT = process.env.PORT || 5000
 const qrcode = require('qrcode')
 const express = require('express')
 const app = express()
@@ -285,7 +285,7 @@ store.bind(fdz.ev)
 	})
 
 	fdz.ev.on('group-participants.update', async (anu) => {
-		require('./ivents/group-participants-update.js')(fdz, anu)
+	require('./ivents/group-participants-update.js')(fdz, anu)
 	})
 
 	// detect group update

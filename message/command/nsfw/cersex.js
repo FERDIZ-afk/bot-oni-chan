@@ -5,7 +5,7 @@ module.exports = {
 	alias: ["randomcersex", "18cersex"],
 	category: "nsfw",
 	wait: true,
-	disable: true,
+//	disable: true,
 	async run({ msg, fdz },{prefix}) {
 	try {
 		let a = Math.floor(Math.random() * 49)

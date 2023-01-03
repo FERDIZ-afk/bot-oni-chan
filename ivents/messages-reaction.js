@@ -16,7 +16,8 @@ module.exports = async (fdz, store, pesan) => {
 				let frem = m.reaction.key.remoteJid.endsWith("@g.us") ? m.reaction.key.participant : m.reaction.key.remoteJid;
 				let frum = m.key.remoteJid.endsWith("@g.us") ? m.key.participant : m.key.remoteJid;
 				await delay(2000)
-				
+				const isGroup = m.reaction.key.remoteJid.endsWith('@g.us')
+      	if (!isGroup) return
 				await fdz.sendMessage(
 					m.reaction.key.remoteJid, {
 						text: `*【﻿ DETECT REACTION MESSAGE 】*\n\n*_Tagged:_* @${(m.reaction.key.fromMe ? fdz.decodeJid(fdz.user.id) : fdz.decodeJid(frem)).split("@")[0]}\n*_To:_* ${frum ? `@${frum.split("@")[0]}` : `-`}\n*_Emoji:_* ${ m.reaction.text }`,
@@ -27,6 +28,6 @@ module.exports = async (fdz, store, pesan) => {
 					});
 					
 			} catch (err) {
-				console.log(JSON.stringify("pesan react " + err, undefined, 2))
+				console.log("pesan react " + err)
 			}
 }

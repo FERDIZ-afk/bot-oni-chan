@@ -1,7 +1,7 @@
 const moment = require("moment-timezone")
 const hari = moment.tz("Asia/Jakarta").format("a");
 const fs = require("fs");
-const { prefixbot, ownerWa, config } = require('../../../config/settings')
+const { prefixbot, ownerWa, config, botName } = require('../../../config/settings')
 const ucapanWaktu = hari.charAt(0).toUpperCase() + hari.slice(1);
 const processTime = (timestamp, now) => {
 	return moment.duration(now - moment(timestamp * 1000)).asSeconds();
@@ -13,11 +13,14 @@ module.exports = {
 	category: "umum",
 	wait: true,
 	async run({ msg, fdz }, { q, owner, map, args }) {
-		if (q) {
+	//	if (q) {
+    if(q.startsWith("--")) {
 			const data = [];
-			const name = q.toLowerCase();
+	//		const name = q.toLowerCase();
+    	const name = q.toLowerCase().replace("--", "")
 			const { command, prefix } = map;
-			const cmd = command.get(name) || [...command.values()].find((x) => x.alias.find((x) => x == args[0]));
+			const cmd = command.get(name) || [...command.values()].find((x) => x.alias.find((x) => x == name));
+		//	const cmd = command.get(name) || [...command.values()].find((x) => x.alias.find((x) => x == args[0]));
 			if (!cmd || (cmd.category === "hidden" && !ownerWa.includes(msg.sender)))
 				return await msg.reply("Command not found");
 			else data.push(`*Name:* ` + cmd.name);
@@ -28,7 +31,7 @@ module.exports = {
 
 			return await msg.reply(data.join("\n"));
 		} else {
-			const { pushName, sender } = msg;
+			const { pushName, sender, isGroup } = msg;
 			const { prefix, command } = map;
 			const cmds = command.keys();
 			let category = [];
@@ -44,6 +47,7 @@ module.exports = {
 				if (config.ignore.directory.includes(info.category.toLowerCase())) continue;
 				cteg = info.category || "No Category";
 				if (info.type == "changelog") continue;
+	//			if (!isGroup && cteg == "group") continue;
 				if (cteg == "hidden") continue;
 				if (!cteg || cteg === "private") cteg = "owner command";
 				if (Object.keys(category).includes(cteg)) category[cteg].push(info);
@@ -52,20 +56,12 @@ module.exports = {
 					category[cteg].push(info);
 				}
 			}
-			let str = `「 *AKYLA* 」
+			let str = `「 ${botName} 」
 	
-◪ *Time*
-❏ ${moment.tz("Asia/Jakarta").format("HH:mm:ss")}
-
-◪ *Speed*
-❏ ${processTime(msg.messageTimestamp, moment())} _seconds_
-
-◪ *Date*
-❏ ${moment.tz("Asia/Jakarta").format("dddd, DD/MM/YYYY")}
-
-◪ *INFO USER*
-❏ Nomer: 「  ${msg.sender.split("@")[0]} 」
-❏ Nama: 「  ${fdz.getName(msg.sender)} 」
+❏ Library : *Baileys-MD*.
+❏ Prefix : ( ${prefix} )
+❏ Tanggal Server : ${moment.tz("Asia/Jakarta").format("dddd, DD/MM/YYYY")}
+❏ Waktu Server : ${moment.tz('Asia/Jakarta').format('HH:mm:ss')}
 
 ◪ *Total Fitur saat ini Termasuk ${prefix}menu/help*
 ❏ ${totpitur}
@@ -89,7 +85,7 @@ ${
 			const keys = Object.keys(category);
 			//var a = 1
 			for (const key of keys) {
-				str += `*❏ ${key.toUpperCase()}*\n${category[key]
+				str += `*❏ ${key.toUpperCase()}* \n${category[key]
 					.map(
 						(cmd, index) =>
 							`*${index + 1}.* *${cmd.options.noPrefix ? "" : `${prefix}`}${cmd.name}* ${
@@ -102,8 +98,9 @@ ${
 					)
 					.join("\n")}\n\n`;
 			}
-			str += `typing *${prefix}help sticker* for get the details and example use`;
+			str += `typing *${prefix}help --sticker* for get the details and example use`;
 			
+			//${readmore}
 			
 				let hekk = {
 		externalAdReply: {

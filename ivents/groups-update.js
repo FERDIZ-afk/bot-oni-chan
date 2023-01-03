@@ -36,6 +36,11 @@ module.exports  = async (send, code) => {
 				send.sendMessage(res.id, {
 					text: `「 Group Settings Change 」\n*Group desk telah diganti menjadi*\n\n*NEW Description :*\n\n${res.desc == 'undefined' ? '' : res.desc}`,
 				});
+      } else if(!res.inviteCode == ''){
+				await delay(2000)
+				send.sendMessage(res.id, {
+					text: `「 Group Settings Change 」\n*Group invite link telah diganti menjadi*\n\n*NEW invite link Code :*\n\n${res.inviteCode == 'undefined' ? '' : "https://chat.whatsapp.com/"+res.inviteCode}`,
+				});
       } else {
 				await delay(2000)
 				send.sendMessage(res.id, {

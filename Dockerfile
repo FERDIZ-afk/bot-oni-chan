@@ -13,9 +13,13 @@ ENV TZ=Asia/Jakarta
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR /root/bot-oni-chan
-
+COPY . .
 RUN npm install pm2 -g
 RUN npm install -g npm@9.1.2
+
+RUN yarn add wa-sticker-formatter
+RUN yarn add @ffmpeg-installer/ffmpeg
+
 RUN pwd
 RUN ls
 
@@ -43,6 +47,6 @@ RUN ls
 EXPOSE 5000
 #CMD ["npm","run","dev"] #run via nodemon
 
-CMD pm2 start run.js && \
+CMD pm2 start pm2-run.js && \
 pm2 save & \
 pm2 logs

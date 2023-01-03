@@ -28,6 +28,10 @@ const {
 	getBuffer
 } = require('../lib/function.js')
 
+const {
+	modulewa,
+} = require('../lib/simpel')
+
 
 async function generateProfilePicture(mediaUpload) {
 const {
@@ -181,6 +185,9 @@ fdz.ev.on('contacts.update', async (update) => {
 	}
 })
 
+
+fdz.serializeM = (m) => modulewa(fdz, m, store)
+
 // code detek group nih
 function _0x1ea6(_0x2212da,_0x298247){const _0x2c0293=_0x2c02();return _0x1ea6=function(_0x1ea601,_0x4d84ce){_0x1ea601=_0x1ea601-0x158;let _0x107903=_0x2c0293[_0x1ea601];return _0x107903;},_0x1ea6(_0x2212da,_0x298247);}function _0x2c02(){const _0x3e877d=['messages','3521340tTprZH','key','image','562424tiKRqQ','\x0atelah\x20menjadikan\x0a@','profilePictureUrl','https://i.ibb.co/sQTkHLD/ppkosong.png','3tMXdKc','split','\x20sebagai\x20admin','messageStubParameters','\x0akeluar','\x0atelah\x20bergabung\x20menggunakan\x20tautan\x20undangan\x20grup\x20ini','35nBjzRo','1106659bofAcb','remoteJid','fromMe','\x0atelah\x20mengubah\x20subjek\x20menjadi','\x0atelah\x20bergabung\x20menggunakan\x20undangan\x20group','3694110FIFhDT','1415674HkyBoB','\x0atelah\x20menambahkan\x0a@','participant','3518490KGPjCQ','sendMessage','4809636YssmOe','includes','user','jid','messageStubType','\x0atelah\x20memberhentikan\x0a@'];_0x2c02=function(){return _0x3e877d;};return _0x2c02();}(function(_0x40f7a4,_0x43be56){const _0x4e7d48=_0x1ea6,_0x4d4c2b=_0x40f7a4();while(!![]){try{const _0x8809cd=-parseInt(_0x4e7d48(0x15c))/0x1+-parseInt(_0x4e7d48(0x162))/0x2*(-parseInt(_0x4e7d48(0x175))/0x3)+parseInt(_0x4e7d48(0x16e))/0x4+-parseInt(_0x4e7d48(0x165))/0x5+parseInt(_0x4e7d48(0x161))/0x6+parseInt(_0x4e7d48(0x15b))/0x7*(-parseInt(_0x4e7d48(0x171))/0x8)+parseInt(_0x4e7d48(0x167))/0x9;if(_0x8809cd===_0x43be56)break;else _0x4d4c2b['push'](_0x4d4c2b['shift']());}catch(_0x185f71){_0x4d4c2b['push'](_0x4d4c2b['shift']());}}}(_0x2c02,0x8cb85),fdz['ev']['on']('messages.upsert',async _0x453e9a=>{const _0x381215=_0x1ea6;try{mek=_0x453e9a[_0x381215(0x16d)][0x0];const _0x1c053a=mek[_0x381215(0x16f)][_0x381215(0x15d)],_0x41db3d=mek[_0x381215(0x16f)]['fromMe']?fdz[_0x381215(0x169)][_0x381215(0x16a)]:mek['participant']?mek[_0x381215(0x164)]:mek[_0x381215(0x16f)]['participant']?mek[_0x381215(0x16f)][_0x381215(0x164)]:_0x1c053a;switch(mek[_0x381215(0x16b)]){case 0x15:fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+_0x41db3d['split']('@')[0x0]+_0x381215(0x15f),'mentions':[_0x41db3d]});break;case 0x18:fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+_0x41db3d['split']('@')[0x0]+'\x0atelah\x20mengubah\x20description','mentions':[_0x41db3d]});break;case 0x16:try{ppuser=await fdz[_0x381215(0x173)](_0x1c053a,_0x381215(0x170));}catch{ppuser=_0x381215(0x174);}fdz[_0x381215(0x166)](_0x1c053a,{'image':await getBuffer(ppuser),'contextInfo':{'mentionedJid':[_0x41db3d]},'caption':'@'+_0x41db3d['split']('@')[0x0]+'\x0atelah\x20mengubah\x20Foto\x20profil\x20group\x20menjadi..'});break;case 0x1b:if(!mek[_0x381215(0x16f)]['participant']&&!mek[_0x381215(0x164)])return fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+mek[_0x381215(0x158)][0x0][_0x381215(0x176)]('@')[0x0]+_0x381215(0x15a),'mentions':mek[_0x381215(0x158)]});fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+_0x41db3d[_0x381215(0x176)]('@')[0x0]+_0x381215(0x163)+mek[_0x381215(0x158)][0x0]['split']('@')[0x0],'mentions':[_0x41db3d,...mek[_0x381215(0x158)]]});break;case 0x1c:!mek[_0x381215(0x158)][0x0][_0x381215(0x168)](fdz[_0x381215(0x169)]['jid'])&&fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+_0x41db3d[_0x381215(0x176)]('@')[0x0]+'\x0atelah\x20mengeluarkan\x0a@'+mek['messageStubParameters'][0x0][_0x381215(0x176)]('@')[0x0],'mentions':[_0x41db3d,...mek['messageStubParameters']]});break;case 0x1d:fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+_0x41db3d[_0x381215(0x176)]('@')[0x0]+_0x381215(0x172)+mek[_0x381215(0x158)][0x0][_0x381215(0x176)]('@')[0x0]+_0x381215(0x177),'mentions':[_0x41db3d,...mek[_0x381215(0x158)]]});break;case 0x1e:fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+_0x41db3d['split']('@')[0x0]+_0x381215(0x16c)+mek[_0x381215(0x158)][0x0][_0x381215(0x176)]('@')[0x0]+'\x20sebagai\x20admin','mentions':[_0x41db3d,...mek[_0x381215(0x158)]]});break;case 0x20:if(mek['key'][_0x381215(0x15e)])return;fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+_0x41db3d['split']('@')[0x0]+_0x381215(0x159),'mentions':[_0x41db3d]});break;case 0x47:fdz[_0x381215(0x166)](_0x1c053a,{'text':'@'+mek[_0x381215(0x158)][0x0][_0x381215(0x176)]('@')[0x0]+_0x381215(0x160),'mentions':mek[_0x381215(0x158)]});break;}}catch(_0x5b3d59){}}));
 
@@ -291,32 +298,34 @@ fdz.copyNForward = async (jid, message, forceForward = false, options = {}) => {
 	return waMessage
 }
   
-fdz.downloadMediaMessage = async (message) => {
-	let mime = (message.msg || message).mimetype || ''
-	let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
-	const stream = await downloadContentFromMessage(message, messageType)
-	let buffer = Buffer.from([])
-	for await (const chunk of stream) {
-		buffer = Buffer.concat([buffer, chunk])
+	fdz.downloadMediaMessage = async (message) => {
+		let quoted = message.msg ? message.msg : message
+		let mime = (message.msg || message).mimetype || ''
+		let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
+		const stream = await downloadContentFromMessage(quoted, messageType)
+		let buffer = Buffer.from([])
+		for await (const chunk of stream) {
+			buffer = Buffer.concat([buffer, chunk])
+		}
+		return buffer
 	}
-	return buffer
-}
 
-fdz.downloadAndSaveMediaMessage = async (message, filename, attachExtension = true) => {
-	let quoted = message.msg ? message.msg : message
-	const FileType = require('file-type')
-	let mime = (message.msg || message).mimetype || ''
-	let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
-	const stream = await downloadContentFromMessage(quoted, messageType)
-	let buffer = Buffer.from([])
-	for await (const chunk of stream) {
-		buffer = Buffer.concat([buffer, chunk])
-	}
-	let type = await FileType.fromBuffer(buffer)
-	trueFileName = attachExtension ? (`./tmp/`+filename + '.' + type.ext) : `./tmp/`+filename
-			// save to file
-	await fs.writeFileSync(trueFileName, buffer)
-	return trueFileName
+	fdz.downloadAndSaveMediaMessage = async (message, filename, attachExtension = true) => {
+		let quoted = message.msg ? message.msg : message
+		const FileType = require('file-type')
+		let mime = (message.msg || message).mimetype || ''
+		let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
+		const stream = await downloadContentFromMessage(quoted, messageType)
+		let buffer = Buffer.from([])
+		for await (const chunk of stream) {
+			buffer = Buffer.concat([buffer, chunk])
+		}
+		let type = await FileType.fromBuffer(buffer)
+		//	trueFileName = attachExtension ? (`./tmp/`+filename + '.' + type.ext) : `./tmp/`+filename
+		trueFileName = attachExtension ? (filename + '.' + type.ext) : filename
+		// save to file
+		await fs.writeFileSync(trueFileName, buffer)
+		return trueFileName
 	}
 	
 fdz.getName = (jid, withoutContact = false) => {
