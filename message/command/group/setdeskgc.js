@@ -1,5 +1,5 @@
 module.exports = {
-	name: "setnamegc",
+	name: "setdeskgc",
 	alias: ["sdgc"],
 	category: "group",
 	desc: "To change desk group ",

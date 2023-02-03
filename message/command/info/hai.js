@@ -1,5 +1,5 @@
 
-
+/*
 module.exports = {
 	name: "hai",
 	alias: ["hei", "woi"],
@@ -10,3 +10,4 @@ module.exports = {
 		await msg.reply(`hai juga kak`);
 	},
 };
+*/

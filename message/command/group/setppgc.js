@@ -1,6 +1,7 @@
 const {
 	delay
 } = require('@adiwajshing/baileys')
+const fs = require("fs")
 const {
 	getRandom
 } = require("../../../lib/function.js")
@@ -18,11 +19,11 @@ module.exports = {
 	async run({ msg, fdz }, { quoted, mime, command }) {
 	if (!quoted) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
 	if (!/image/.test(mime)) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
-	if (/webp/.test(mime)) return msg.reply(`Kirim/Reply Image Dengan Caption ${command}`)
+	if (/webp/.test(mime)) return msg.reply(`ini kan stiker kak coba,\nKirim Image Dengan Caption ${command}`)
   	hmm = await './tmp/setppgc-' + getRandom('.png')
   	let media = await fdz.downloadAndSaveMediaMessage(quoted, hmm)
 	await fdz.updateProfilePicture(msg.chat, media).then(() => msg.reply('Success update profile picture group')).catch(msg.reply)
-			await delay(500)
+			await delay(5000)
 					await fs.unlinkSync(media)
 	},
 };

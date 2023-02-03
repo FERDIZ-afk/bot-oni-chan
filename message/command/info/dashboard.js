@@ -1,12 +1,11 @@
-var botname = "akyla"
-
+const { botName } = require('../../../config/settings')
 module.exports = {
 	name: "dashboard",
 	alias: ["db"],
-	desc: "display " + botname + " bot dashboard info",
+	desc: "display " + botName + " bot dashboard info",
 	category: "info",
 //	isSpam: true,
-	wait: true,
+//	wait: true,
 	async run({ msg, conn }, { q, prefix, map }) {
 		if (q) {
 			var data =
@@ -14,7 +13,8 @@ module.exports = {
 				[...map.command.values()].find((x) => x.alias.find((a) => a == q.toLowerCase()));
 			if (!data) return msg.reply("Feature not found");
 			let findData = dashboard.find((a) => a.name == data.name.toLowerCase());
-			teks = `*• Dashboard ${botname}*\n\n`;
+			if (!findData) return
+			teks = `*• Dashboard* ${botName}\n\n`;
 			teks += `*➢ #${findData.name}* : ${findData.success + findData.failed}\n`;
 			teks += `*⌘ Success:* ${findData.success}\n`;
 			teks += `*⌘ Failed:* ${findData.failed}\n`;
@@ -27,7 +27,7 @@ module.exports = {
 			let success = dashboard.map((a) => a.success);
 			let failed = dashboard.map((a) => a.failed);
 			let jumlah = require("mathjs").evaluate(success.join("+")) + require("mathjs").evaluate(failed.join("+"));
-			let teks = `*• Dashboard ${botname}*\n\n*➤ Global HIT*\n\n`;
+			let teks = `*• Dashboard* ${botName}\n\n*➤ Global HIT*\n\n`;
 			teks += `*➢ HIT*\n`;
 			teks += `*⌘ Global:* ${jumlah}\n`;
 			teks += `*⌘ Success:* ${require("mathjs").evaluate(success.join("+"))}\n`;

@@ -1,5 +1,5 @@
 
-
+/*
 module.exports = {
 	name: "tes",
 	alias: ["tesbot", "testing"],
@@ -10,3 +10,4 @@ module.exports = {
 		await msg.reply(`work nih`);
 	},
 };
+*/

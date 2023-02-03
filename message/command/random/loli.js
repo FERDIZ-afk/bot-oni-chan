@@ -1,3 +1,6 @@
+
+
+/*
 module.exports = {
 	name: "loli",
 	alias: ["randomloli", "lolianime"],
@@ -16,3 +19,4 @@ module.exports = {
 		await fdz.sendMessage(msg.chat, buttonMessage);
 	},
 };
+*/

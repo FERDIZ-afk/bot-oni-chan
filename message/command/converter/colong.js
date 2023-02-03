@@ -29,8 +29,8 @@ module.exports = {
 	wait: true,
 	async run({ msg, fdz }, { quoted, args, mime, command }) {
 	  
-	if (!msg.quoted) return msg.reply('Reply pesan nya')
-	if (!/webp/.test(mime)) return msg.reply(`Reply to a sticker`)
+	if (!msg.quoted) return msg.reply('Reply sticker nya')
+	if (!/webp/.test(mime)) return msg.reply(`reply sticker that you want to make into a meme`)
 	try {
 	anu = args.join(' ').split('|')
 	satu = anu[0] !== '' ? anu[0] : stickerInfo.pack

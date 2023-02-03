@@ -2,22 +2,23 @@
    * Create By FERDIZ -AFK 
    * Contact Me on wa.me/6287877173955
    * Follow https://github.com/FERDIZ-afk
-*/
+*/ 
 const {
 	default: makeWASocket,
 	DisconnectReason,
 	AnyMessageContent,
 	delay,
 	WA_DEFAULT_EPHEMERAL,
-	useSingleFileAuthState,
 	generateForwardMessageContent,
 	prepareWAMessageMedia,
 	generateWAMessageFromContent,
+	normalizeMessageContent,
 	generateMessageID,
 	downloadContentFromMessage,
 	makeInMemoryStore,
 	fetchLatestBaileysVersion,
 	jidDecode,
+	getContentType,
 	proto
 } = require('@adiwajshing/baileys')
 
@@ -35,7 +36,7 @@ var dbs = []
 global.dbchatpesan = dbs
 
 const { color } = require('../lib/color')
-const { prefixbot, ownerWa } = require('../config/settings')
+const { prefixbot, ownerNumber } = require('../config/settings')
 const { infobot } = require("../config/botrespon")
 
 const prefix = prefixbot
@@ -51,20 +52,23 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		});
 	//	console.log(m)
 		const content = JSON.stringify(mek.message)
-		const type = Object.keys(mek.message)[0];
-		1
+		const type = Object.keys(mek.message)[0];1;
     
     
 		global.dashboard = JSON.parse(fs.readFileSync("./database/dashboard.json"));
-		if (m && type == "protocolMessage") fdz.ev.emit("message.delete", m.message.protocolMessage.key);
-		const body = m.body || (type === 'conversation' && m.message.conversation) ? m.message.conversation : (type == 'imageMessage') && m.message.imageMessage.caption ? m.message.imageMessage.caption :	(type == 'videoMessage') && m.message.videoMessage.caption ? m.message.videoMessage.caption : 	(type == 'extendedTextMessage') && m.message.extendedTextMessage.text ? m.message.extendedTextMessage.text : (type == 'listResponseMessage') && m.message.listResponseMessage.singleSelectReply.selectedRowId ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (type == 'buttonsResponseMessage') && m.message.buttonsResponseMessage.selectedButtonId ? m.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && m.message.templateButtonReplyMessage.selectedId ? m.message.templateButtonReplyMessage.selectedId : ''
-
+		const body = (m.mtype === 'conversation' && m.message.conversation) ? m.message.conversation :
+		(m.mtype == 'imageMessage') && m.message.imageMessage.caption ? m.message.imageMessage.caption : 
+		(m.mtype == 'videoMessage') && m.message.videoMessage.caption ? m.message.videoMessage.caption : 
+		(m.mtype == 'extendedTextMessage') && m.message.extendedTextMessage.text ? m.message.extendedTextMessage.text : 
+		(m.mtype == 'listResponseMessage') && m.message.listResponseMessage.singleSelectReply.selectedRowId ? m.message.listResponseMessage.singleSelectReply.selectedRowId : 
+		(m.mtype == 'buttonsResponseMessage') && m.message.buttonsResponseMessage.selectedButtonId ? m.message.buttonsResponseMessage.selectedButtonId : 
+		(m.mtype == 'templateButtonReplyMessage') && m.message.templateButtonReplyMessage.selectedId ? m.message.templateButtonReplyMessage.selectedId : ''
 		var budy = (typeof m.text == 'string' ? m.text : '')
 
 		const fromMe = msg.key.fromMe
 		const from = m.key.remoteJid //|| fromMe
 
-		const args = budy.trim().split(/ +/).slice(1)
+		const args = body.trim().split(/ +/).slice(1)
 		const text = q = args.join(" ")
 		const quoted = m.quoted ? m.quoted : m
 		const mime = (quoted.msg || quoted).mimetype || ''
@@ -78,7 +82,7 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		const sender = m.sender //isGroup ? (msg.key.participant ? msg.key.participant : msg.participant) : msg.key.remoteJid
 		const botNumber = fdz.decodeJid(fdz.user.id) || fdz.user.id.split(':')[0] + '@s.whatsapp.net' || fdz.user.jid
 		var ownerbot = [botNumber]
-		const isOwner = sender.includes(ownerWa) || sender.includes(ownerWa) || sender.includes(ownerbot)
+		const isOwner = sender.includes(ownerNumber) || sender.includes(ownerNumber) || sender.includes(ownerbot)
 
 		const groupMetadata = isGroup ? await fdz.groupMetadata(m.chat) : ''
 		const groupName = m.isGroup ? await groupMetadata.subject : ''
@@ -108,37 +112,38 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		const isCmd = body.startsWith(prefix);
 
 
-    mess = {
-    		wait: '⌛ Sedang di proses「 ⏳ 」',
-    		success: '✔️ Berhasil ✔️',
-    		error: {
-    			stick: '❌ Gagal, terjadi kesalahan saat mengkonversi gambar ke sticker ❌',
-   				Iv: '❌ Link tidak valid ❌',
-       		api: "Sorry an error occurred"
-    		},
-    		only: {
-    			group: '❌ Perintah ini hanya bisa di gunakan dalam group! ❌',
-   				privateB: '❌ Perintah ini hanya bisa di gunakan dalam chat private! ❌',
-   				ownerG: '❌ Perintah ini hanya bisa di gunakan oleh owner group! ❌',
-   				ownerB: '❌ Perintah ini hanya bisa di gunakan oleh owner bot! ❌',
-   				admin: '❌ Perintah ini hanya bisa di gunakan oleh admin group! ❌',
-   				Badmin: '❌ Perintah ini hanya bisa di gunakan ketika bot menjadi admin! ❌'
-    		}
- 		}
+		global.mess = {
+			wait: '⌛ Sedang di proses「 ⏳ 」',
+			success: '✔️ Berhasil ✔️',
+			error: {
+				stick: '❌ Gagal, terjadi kesalahan saat mengkonversi gambar ke sticker ❌',
+				Iv: '❌ Link tidak valid ❌',
+				api: "Sorry an error occurred"
+			},
+			only: {
+				group: '❌ Perintah ini hanya bisa di gunakan dalam group! ❌',
+				privateB: '❌ Perintah ini hanya bisa di gunakan dalam chat private! ❌',
+				ownerG: '❌ Perintah ini hanya bisa di gunakan oleh owner group! ❌',
+				ownerB: '❌ Perintah ini hanya bisa di gunakan oleh owner bot! ❌',
+				admin: '❌ Perintah ini hanya bisa di gunakan oleh admin group! ❌',
+				Badmin: '❌ Perintah ini hanya bisa di gunakan ketika bot menjadi admin! ❌'
+			}
+		}
 
 	
-	if ( m.mtype == 'viewOnceMessage' && m.msg.viewOnce) {
-  try {
-		fdz.ev.emit("viewOnceMessage", m);
-  } catch (err) {
-		console.error(util.format(err))
-		//console.error(util.format(m))
-		fdz.sendMessage(m.sender, {
-			text: util.format(err),
-		}, {
-			quoted: m
-		})
-	}}
+		if (m.mtype == 'viewOnceMessageV2' ) {
+			try {
+				fdz.ev.emit("viewOnceMessage", m);
+			} catch (err) {
+				console.error(util.format(err))
+				//console.error(util.format(m))
+				fdz.sendMessage(m.sender, {
+					text: util.format(err),
+				}, {
+					quoted: m
+				})
+			}
+		}
 
 	if ( m.mtype == 'pollUpdateMessage') {
   try {
@@ -182,16 +187,6 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 		   var teks = await infobot(fdz, sender, prefix, pushName)
       await  m.reply(teks)
     }
-
-		const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
-		const cmd =
-			map.command.get(body.trim().split(/ +/).shift().toLowerCase()) ||
-			[...map.command.values()].find((x) =>
-				x.alias.find((x) => x.toLowerCase() == body.trim().split(/ +/).shift().toLowerCase())
-			) ||
-			map.command.get(cmdName) ||
-			[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == cmdName));
-
 
 		if (isOwner) {
 			if (budy.startsWith(">")) {
@@ -255,8 +250,17 @@ module.exports = fdz = async (fdz, m, mek, chatUpdate, store, map) => {
 				}
 			}
 		}
-		
-		
+	
+		require("../lib/function/menfess")(m, fdz,prefix,body);
+
+		const cmdName = body.slice(temp_pref.length).trim().split(/ +/).shift().toLowerCase();
+		const cmd =
+			map.command.get(body.trim().split(/ +/).shift().toLowerCase()) ||
+			[...map.command.values()].find((x) =>
+				x.alias.find((x) => x.toLowerCase() == body.trim().split(/ +/).shift().toLowerCase())
+			) ||
+			map.command.get(cmdName) ||
+			[...map.command.values()].find((x) => x.alias.find((x) => x.toLowerCase() == cmdName));
 
 if (m.message && !m.key.fromMe ) {
       //      fdz.sendReadReceipt(m.chat, m.sender, [m.key.id])
@@ -285,51 +289,55 @@ if (m.message && !m.key.fromMe ) {
 		
 		
 		if (optionsCmd.isAdmin && !isGroupAdmins) {
-			await fdz.sendMessage(from, { text: mess.only.admin }, { quoted: msg });
+			await fdz.sendMessage(from, { text: mess.only.admin	}, { quoted: m });
 			return true;
 		}
-		
 		if (optionsCmd.isQuoted && !msg.quoted) {
 			await msg.reply(`Please reply message sesuai type pesan tersebut`);
 			return true;
 		}
-		
 		if (optionsCmd.isBotAdmin && !isBotGroupAdmins) {
-			await fdz.sendMessage(from, { text: mess.only.Badmin }, { quoted: msg });
+			await fdz.sendMessage(from, { text: mess.only.Badmin }, { quoted: m });
 			return true;
 		}
-		
 		if (optionsCmd.isOwner && !isOwner) {
-			await fdz.sendMessage(from, { text: mess.only.ownerB}, { quoted: msg });
+			await fdz.sendMessage(from, { text: mess.only.ownerB }, { quoted: m });
 			return true;
 		}
 		if (optionsCmd.isGroup && !isGroup) {
-			await fdz.sendMessage(from, { text: mess.only.group }, { quoted: msg });
+			await fdz.sendMessage(from, { text: mess.only.group }, { quoted: m });
 			return true;
 		}
-		
-    if (optionsCmd.query && !q) {
+		if (optionsCmd.query && !q) {
 			await msg.reply(
 				typeof optionsCmd.query == "boolean" && optionsCmd.query ? `Masukan query` : optionsCmd.query
 			);
 			return true;
 		}
-		
+
 		if (optionsCmd.disable) {
 			await fdz.sendMessage(
-				from,
-				{ text: typeof optionsCmd.wait == "string" ? optionsCmd.wait : "untuk sementara fitur sedang maintenance" },
-				{ quoted: msg }
+				from, {
+					text: typeof optionsCmd.wait == "string" ? optionsCmd.wait : "untuk sementara fitur sedang maintenance\ncobalah fitur yang lain."
+				}, {
+					quoted: m
+				}
 			);
 			return true;
 		}
-		
-		
+
+if(optionsCmd.isPrivate && !isPrivate) {
+		await msg.reply("Fitur ini hanya bisa di gunakan di chat private")
+		return true;
+	}
+
 		if (optionsCmd.wait) {
 			await fdz.sendMessage(
-				from,
-				{ text: typeof optionsCmd.wait == "string" ? optionsCmd.wait : mess.wait },
-				{ quoted: msg }
+				from, {
+					text: typeof optionsCmd.wait == "string" ? optionsCmd.wait : mess.wait
+				}, {
+					quoted: m
+				}
 			);
 		}
 		
@@ -401,7 +409,13 @@ if (m.message && !m.key.fromMe ) {
 			}
 
 		} catch (e) {
-		  /*
+			console.error(util.format(e))
+			await fdz.sendMessage(ownerNumber[0], {
+			text: util.format(e),
+		}, {
+			quoted: m
+		})
+		
 			if (cmd.category != "private") {
 				let fail = dashboard.find((command) => command.name == cmd.name);
 				fail.failed += 1;
@@ -409,88 +423,11 @@ if (m.message && !m.key.fromMe ) {
 				fail.lastUpdate = Date.now();
 				fs.writeFileSync("./database/dashboard.json", JSON.stringify(dashboard));
 			}
-		  */
-			console.error(util.format(e))
-			await fdz.sendMessage(ownerWa[0], {
-			text: util.format(e),
-		}, {
-			quoted: m
-		})
 		}
 		
-		/*
-		
-switch (command) {
-//Owner Menu
-case prefix + 'restart': {
-	if (!isOwner) throw m.reply(mess.only.ownerB)
-	if (!process.send) throw m.reply('Dont: node index.js\nDo: node main.js')
-	if (fdz.user.jid) {
-	  //  fs.writeFileSync('./database/mess.json', JSON.stringify([], null, 2))
-		await m.reply('*Restarting Bot...*')
-		await delay(1500)
-		exec(`pm2 restart webot`)
-//		process.send('reset')
-	//	m.reply(mess.done)
-	} else throw m.reply('Eits tidak semudah itu Ferguso')
-}
-break
- 
-case prefix + 'up':
-case prefix + 'update': {
-	if (!isOwner) throw m.reply(mess.only.ownerB)
-	if (!process.send) throw m.reply('Dont: node index.js\nDo: node main.js')
-	if (fdz.user.jid) {
-	  //  fs.writeFileSync('./database/mess.json', JSON.stringify([], null, 2))
-exec(`git pull`, (err, stdout) => {
-					if (err) return m.reply(`${err}`)
-					if (stdout) m.reply(`${stdout}`)
-				})
-//		process.send('reset')
-		await delay(1500)
-	} else throw m.reply('Eits tidak semudah itu Ferguso')
-}
-break
-
-
-	case prefix + 'public': {
-		if (!isOwner) return m.reply(mess.only.ownerB)
-		if (banChats === false) return await m.reply('Dah public daritadi mank')
-		banChats = false
-		m.reply(`「 *PUBLIC-MODE* 」`)
-	}
-	break
-
-case prefix + 'self': {
-	if (!isOwner) return m.reply(mess.only.ownerB)
-	if (banChats === true) return await m.reply('Dah self daritadi mank')
-	//	uptime = process.uptime()
-	banChats = true
-	m.reply(`「 *SELF-MODE* 」`)
-}
-break
-
-default:
-
-}
-		
-		*/
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
 	} catch (err) {
 		console.error(util.format(err))
-		await fdz.sendMessage(ownerWa[0], {
+		await fdz.sendMessage(ownerNumber[0], {
 			text: util.format(err),
 		}, {
 			quoted: m

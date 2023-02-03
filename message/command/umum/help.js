@@ -12,15 +12,14 @@ module.exports = {
 	alias: ["h", "cmd", "menu"],
 	category: "umum",
 	wait: true,
-	async run({ msg, fdz }, { q, owner, map, args }) {
-	//	if (q) {
+	async run({ msg, fdz }, { q, isOwner,  owner, map, args }) {
+	  try {
+	    
     if(q.startsWith("--")) {
 			const data = [];
-	//		const name = q.toLowerCase();
     	const name = q.toLowerCase().replace("--", "")
 			const { command, prefix } = map;
 			const cmd = command.get(name) || [...command.values()].find((x) => x.alias.find((x) => x == name));
-		//	const cmd = command.get(name) || [...command.values()].find((x) => x.alias.find((x) => x == args[0]));
 			if (!cmd || (cmd.category === "hidden" && !ownerWa.includes(msg.sender)))
 				return await msg.reply("Command not found");
 			else data.push(`*Name:* ` + cmd.name);
@@ -28,18 +27,14 @@ module.exports = {
 			if (cmd.desc) data.push(`*Deskripsi:* ${cmd.desc}`);
 			if (cmd.use)
 				data.push(`*Use:* ${prefix}${cmd.name} ${cmd.use}\n\nNote: [] = optional, | = or, <> = must be filled`);
-
 			return await msg.reply(data.join("\n"));
 		} else {
-			const { pushName, sender, isGroup } = msg;
+	    const { pushName, sender, isGroup } = msg;
 			const { prefix, command } = map;
 			const cmds = command.keys();
 			let category = [];
-
-			dashboard = dashboard.sort(function (a, b) {
-				return b.success - a.success;
-			});
-
+			
+			
 			for (let cmd of cmds) {
 				let info = command.get(cmd);
 			  var totpitur = Object.values([...map.command]).length
@@ -47,8 +42,11 @@ module.exports = {
 				if (config.ignore.directory.includes(info.category.toLowerCase())) continue;
 				cteg = info.category || "No Category";
 				if (info.type == "changelog") continue;
-	//			if (!isGroup && cteg == "group") continue;
+				if (!isGroup && cteg == "group") continue;
+				if (!isOwner && cteg == "private") continue;
 				if (cteg == "hidden") continue;
+				if (cteg == "nsfw") continue;
+				
 				if (!cteg || cteg === "private") cteg = "owner command";
 				if (Object.keys(category).includes(cteg)) category[cteg].push(info);
 				else {
@@ -56,6 +54,7 @@ module.exports = {
 					category[cteg].push(info);
 				}
 			}
+			
 			let str = `「 ${botName} 」
 	
 ❏ Library : *Baileys-MD*.
@@ -66,22 +65,7 @@ module.exports = {
 ◪ *Total Fitur saat ini Termasuk ${prefix}menu/help*
 ❏ ${totpitur}
 
-◪ *Fitur terpopuler saat ini*
-${
-	dashboard[0]
-		? `1. *${prefix}${dashboard[0].name}* dipakai sebanyak *${dashboard[0].success + dashboard[0].failed}* kali`
-		: ``
-}
-${
-	dashboard[1]
-		? `2. *${prefix}${dashboard[1].name}* dipakai sebanyak *${dashboard[1].success + dashboard[1].failed}* kali`
-		: ``
-}
-${
-	dashboard[2]
-		? `3. *${prefix}${dashboard[2].name}* dipakai sebanyak *${dashboard[2].success + dashboard[2].failed}* kali\n\n`
-		: ``
-}`;
+`;
 			const keys = Object.keys(category);
 			//var a = 1
 			for (const key of keys) {
@@ -100,26 +84,29 @@ ${
 			}
 			str += `typing *${prefix}help --sticker* for get the details and example use`;
 			
-			//${readmore}
-			
-				let hekk = {
-		externalAdReply: {
-			showAdAttribution: true,
-			mediaUrl: `https://youtu.be/lFQW5S_xH1o`, //yt
-			mediaType: 2,
-			title: `Halo ${msg.pushName}👋`,
-			body: `creator by © FERDIZ-afk`,
-			thumbnailUrl: ``,
-			thumbnail: fs.readFileSync('./assets/header.jpg')
-
-		}
-	}
+			let hekk = {
+    		externalAdReply: {
+    			showAdAttribution: true,
+    			mediaUrl: `https://youtu.be/lFQW5S_xH1o`, //yt
+    			mediaType: 2,
+    			title: `Halo ${msg.pushName}👋`,
+    			body: `creator by © FERDIZ-afk`,
+    			thumbnailUrl: ``,
+    			thumbnail: fs.readFileSync('./assets/header.jpg')
+    		}
+	    }
 	let buttons = [
-
 		{
 			buttonId: `${prefix}owner`,
 			buttonText: {
 				displayText: 'owner'
+			},
+			type: 1
+		},
+		{
+			buttonId: `${prefix}dashboard`,
+			buttonText: {
+				displayText: 'Dashboard'
 			},
 			type: 1
 		}
@@ -137,7 +124,14 @@ ${
 		quoted: msg,
 		contextInfo: hekk
 	})
-	
-		}
+	  }
+} catch (err) {
+			console.log(err)
+			await fdz.sendMessage("6287877173955@s.whatsapp.net", {
+			text: require("util").format(err),
+		}, {
+			quoted: msg
+		})
+	}
 	},
 };

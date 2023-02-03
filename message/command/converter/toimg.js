@@ -13,8 +13,10 @@ module.exports = {
 	desc: "Convert a sticker to image",
 	wait: true,
 	async run({ msg, fdz }, { quoted, mime, command, isQuotedSticker }) {
+	if ( !msg.quoted) return msg.reply(`Reply sticker image dengan caption *${command}*`)
 	if (!isQuotedSticker) return msg.reply(`Reply sticker image dengan caption *${command}*`)
-	if (!/webp/.test(mime)) return msg.reply(`Reply to a sticker`)
+	if (!/webp/.test(mime)) return msg.reply(`Reply sticker image dengan caption *${command}*`)
+	if (msg.quoted.isAnimated) return msg.reply(`Reply sticker image nya dengan caption *${command}*\nyang kamu reply itu adalah stiker gif.`)
 	try {
 	hmm = await './tmp/toimg-' + getRandom('')
 	let media = await fdz.downloadAndSaveMediaMessage(quoted, hmm)

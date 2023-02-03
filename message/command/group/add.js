@@ -62,6 +62,9 @@ module.exports = {
 				text: `Buka tautan ini untuk bergabung ke grup WhatsApp saya: \nhttps://chat.whatsapp.com/${code}`,
 		})
 	}
+	if (get_status == 406) {
+		msg.reply('_❌ ERROR: This number is a business account and cannot be invited into the group! ❌_');
+	}
 	if (get_status == 408) {
 		msg.reply('_❌ ERROR: Number has left the group recently! ❌_');
 	}
