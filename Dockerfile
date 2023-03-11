@@ -46,6 +46,6 @@ RUN ls
 EXPOSE 5000
 #CMD ["npm","run","dev"] #run via nodemon
 
-CMD pm2 start pm2-run.js && \
-pm2 save & \
-pm2 logs
+CMD pm2-runtime start pm2run.js --name bot && \
+pm2 list & \
+pm2 monitor

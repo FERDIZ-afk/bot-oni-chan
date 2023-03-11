@@ -60,7 +60,6 @@
     "pm2": "^5.2.0",
     "qrcode": "^1.5.1",
     "qrcode-terminal": "^0.12.0",
-    "sharp": "^0.30.5",
     "syntax-error": "^1.4.0",
     "typescript": "^4.8.4",
     "util": "^0.12.4"
