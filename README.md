@@ -22,6 +22,7 @@ Sesion ini menggunakan useMultiFileAuthState dan di simpan di folder bersama aut
 ## My Project
 WhatsApp Bot Multi Device [`FERDIZ-afk/bot-oni-chan`](https://github.com/FERDIZ-afk/bot-oni-chan)
 
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/yguFTy?referralCode=JDvWMF)
 
 ## UNTUK PENGGUNA WINDOWS/RDP
 

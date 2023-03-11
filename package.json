@@ -31,7 +31,7 @@
   "author": "FERDIZ-afk",
   "license": "ISC",
   "dependencies": {
-    "@adiwajshing/baileys": "github:FERDIZ-afk/Baileys",
+    "@adiwajshing/baileys": "npm:@ferdiz-afk/baileys",
     "@adiwajshing/keyed-db": "latest",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@hapi/boom": "^10.0.0",

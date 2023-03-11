@@ -23,15 +23,14 @@ RUN yarn add @ffmpeg-installer/ffmpeg
 RUN pwd
 RUN ls
 
-RUN cd node_modules/@adiwajshing/baileys && npm run build:tsc && cp src/Defaults/baileys-version.json lib/Defaults/baileys-version.json
-
-RUN cp node_modules/@adiwajshing/baileys/src/Defaults/baileys-version.json node_modules/@adiwajshing/baileys/lib/Defaults/baileys-version.json
-RUN ls node_modules/@adiwajshing/baileys/lib/Defaults
+# khusus command kalau make Baileys versi github 
+#RUN cd node_modules/@adiwajshing/baileys && npm run build:tsc && cp src/Defaults/baileys-version.json lib/Defaults/baileys-version.json
+#RUN cp node_modules/@adiwajshing/baileys/src/Defaults/baileys-version.json node_modules/@adiwajshing/baileys/lib/Defaults/baileys-version.json
+#RUN ls node_modules/@adiwajshing/baileys/lib/Defaults
 
 RUN ls
 
 #ngak guna tapi jangan di ilangin     "postinstall": "npm i typescript -g && tsc -p ./node_modules/@adiwajshing/baileys/ && cp ./node_modules/@adiwajshing/baileys/src/Defaults/baileys-version.json ./node_modules/@adiwajshing/baileys/lib/Defaults/baileys-version.json"
-
 
 
 #awal pm2
