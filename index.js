@@ -1,399 +1,192 @@
-/**
-   * Create By FERDIZ -AFK 
-   * Contact Me on wa.me/6287877173955
-   * Follow https://github.com/FERDIZ-afk
-*/
-
-qrwa = null
-PORT = process.env.PORT || 5000
-const qrcode = require('qrcode')
-const express = require('express')
-const app = express()
-app.enable('trust proxy')
-app.set("json spaces",2)
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.all('*', async (req, res) => {
-    if (qrwa) return res.type('.jpg').send(qrwa)
-    res.send('QRCODE BELUM TERSEDIA. SILAHKAN REFRESH TERUS MENERUS')
-})
-app.listen(PORT, async() => {
-    console.log(`express listen on port ${PORT}`)
-})
-
-const Pino = require("pino")
+require('./global')
 const {
-	default: makeWASocket,
-	DisconnectReason,
-	AnyMessageContent,
-	delay,
-	useMultiFileAuthState, 
-	generateForwardMessageContent,
-	prepareWAMessageMedia,
-	generateWAMessageFromContent,
-	generateMessageID,
-	downloadContentFromMessage,
-	makeInMemoryStore,
-	fetchLatestBaileysVersion,
-  MessageRetryMap, 
-	jidDecode,
-	jidNormalizedUser,
-	proto
-} = require('@adiwajshing/baileys')
+  default: makeWASocket,
+    DisconnectReason,
+    delay,
+    useMultiFileAuthState,
+    generateForwardMessageContent,
+    downloadContentFromMessage,
+    makeInMemoryStore,
+    fetchLatestBaileysVersion,
+    getBinaryNodeMessages,
+    makeCacheableSignalKeyStore,
+    normalizeMessageContent,
+    jidDecode,
+    jidNormalizedUser,
+    PHONENUMBER_MCC,
+    proto,
+    Browsers
+  } = require('@adiwajshing/baileys');
 
-const {
-	Boom
-} = require("@hapi/boom")
-const lolcatjs = require('lolcatjs')
-const path = require("path");
-const fs = require("fs");
+  const Pino = require('pino');
+  const lolcatjs = require('lolcatjs');
+  const {
+    Boom
+  } = require('@hapi/boom');
 
-const {
-	modulewa,
-} = require('./lib/simpel')
-const {
-	sendmessages,
-} = require('./message/messages-send')
+  const pairingCode = !!config.options.pairingNumber;
 
-const { color } = require('./lib/color')
-const utils = require("./utils");
-const { prefixbot } = require('./config/settings')
-const msgRetryCounterMap = MessageRetryMap || { }
+  async function startfdz() {
+    const {
+      state,
+      saveCreds
+    } = await useMultiFileAuthState(config.options.pairingNumber ? `session_${config.options.pairingNumber}`: config.options.sessionName || 'session'); //await useMultiFileAuthState('auth_info_baileys');
+    let {
+      version,
+      isLatest
+    } = await fetchLatestBaileysVersion();
 
-var low
-try {
-	low = require('lowdb')
-} catch (e) {
-	low = require('./lib/lowdb')
-}
+    const store = makeInMemoryStore({
+      logger: Pino().child({
+        level: 'silent',
+        stream: 'store'
+      })
+    })
+    //    console.log(store)
 
-const {
-	Low,
-	JSONFile
-} = low
-const _ = require('lodash')
-const mongoDB = require('./lib/mongoDB')
-const cloudDBAdapter = require('./lib/cloudDBAdapter')
-//global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
-global.db = new Low(
-	//	/https?:\/\//.test(opts['db'] || '') ?
-	//new cloudDBAdapter(opts['db']) : /mongodb/.test(opts['db']) ?
-	//new mongoDB(mongoURI) 
-	new JSONFile(`./database/dbbot.json`)
-)
+    var fdz = makeWASocket({
+      version,
+      // bisa memberikan konfigurasi tambahan di sini
+  //    generateHighQualityLinkPreview: true,
+   //   syncFullHistory: true,
+   //   mobile: false,
+      markOnlineOnConnect: false,
+      logger: Pino({
+        level: 'silent'
+      }),
+      printQRInTerminal: !pairingCode,
+      auth: {
+        creds: state.creds,
+        keys: makeCacheableSignalKeyStore(state.keys, Pino({
+          level: 'silent'
+        }).child({
+          level: 'silent'
+        }))
+      }
+    });
+    //   console.log(fdz)
+    fdz = require('./message/messages-send').sendmessages(fdz, store)
+    if (pairingCode && !fdz?.authState.creds.registered) {
+      let phoneNumber;
+      if (typeof pairingCode === "string") {
+        phoneNumber = pairingCode.replace(/[^0-9]/g, '');
+        if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
+          console.log("Start with your country's WhatsApp code, Example : 62xxx")
+        }
+      } else {
+        phoneNumber = ""; // Nilai default jika options.pairingNumber bukan string
+      }
 
+      setTimeout(async () => {
+        let code = await fdz?.requestPairingCode(phoneNumber);
+        code = code?.match(/.{1,4}/g)?.join("-") || code;
+        console.log(`your pairing code : ${code}\n\n\n\n\n\n\n`)
+      }, 3000);
+    }
 
-global.DATABASE = global.db // Backwards Compatibility
-global.loadDatabase = async function loadDatabase() {
-	if (global.db.READ) return new Promise((resolve) => setInterval(function() {
-		(!global.db.READ ? (clearInterval(this), resolve(global.db.data == null ? global.loadDatabase() : global.db.data)) : null)
-	}, 1 * 1000))
-	if (global.db.data !== null) return
-	global.db.READ = true
-	await global.db.read()
-	global.db.READ = false
-	global.db.data = {
-		users: {
-		  contacts : {},
-		},
-		group: {
-		  antilink : [],
-		  antiviewonce : [],
-		  antidelete : [],
-		},
-		donate: { 
-		  saweria : []
-		},
-		menfess: {},
-		...(global.db.data || {})
-	}
-	global.db.chain = _.chain(global.db.data)
-}
-loadDatabase()
+    store.bind(fdz.ev)
 
-if (global.db) setInterval(async () => {
-	if (global.db.data) await global.db.write()
-}, 30 * 1000)
-
-const attribute = {};
-attribute.prefix = prefixbot 
-
-attribute.command = new Map();
-
-// database game
-global.addMap = (x) => {
-	attribute[x] = new Map();
-};
-
-// lock cmd
-attribute.lockcmd = new Map();
-
-
-
-const ReadFitur = () => {
-	let pathdir = "./message/command" //path.join(__dirname, "./message/command");
-	let fitur = fs.readdirSync(pathdir);
-	console.log("Loading commands..")
-//	spinnies.add("spinner-1", { text: "Loading commands..", color: "green" });
-	fitur.forEach(async (res) => {
-		const commands = fs.readdirSync(`${pathdir}/${res}`).filter((file) => file.endsWith(".js"));
-		for (let file of commands) {
-			const command = require(`${pathdir}/${res}/${file}`);
-			if (typeof command.run != "function") continue;
-			const cmdOptions = {
-				name: "command",
-				alias: [""],
-				desc: "",
-				use: "",
-				type: "", // default: changelog
-				category: typeof command.category == "undefined" ? "" : res.toLowerCase(),
-				wait: false,
-				isOwner: false,
-				isAdmin: false,
-				isQuoted: false,
-				isGroup: false,
-				isBotAdmin: false,
-				query: false,
-				noPrefix: false,
-				isMedia: {
-					isQVideo: false,
-					isQAudio: false,
-					isQImage: false,
-					isQSticker: false,
-					isQDocument: false,
-				},
-				disable: false,
-				isUrl: false,
-				run: () => {},
-			};
-			let cmd = utils.parseOptions(cmdOptions, command);
-			let options = {};
-			for (var k in cmd)
-				typeof cmd[k] == "boolean"
-					? (options[k] = cmd[k])
-					: k == "query" || k == "isMedia"
-					? (options[k] = cmd[k])
-					: "";
-			let cmdObject = {
-				name: cmd.name,
-				alias: cmd.alias,
-				desc: cmd.desc,
-				use: cmd.use,
-				type: cmd.type,
-				category: cmd.category,
-				options: options,
-				run: cmd.run,
-			};
-			attribute.command.set(cmd.name, cmdObject);
-			require("delay")(100);
-	//		global.reloadFile(`./message/command/${res}/${file}`);
-		}
-	});
-	console.log("Command loaded successfully")
-//	spinnies.succeed("spinner-1", { text: "Command loaded successfully", color: "yellow" });
-};
-// cmd
-ReadFitur();
+    fdz.ev.on('connection.update', (update) => {
+      const {
+        connection,
+        lastDisconnect,
+        qr
+      } = update;
+      if (connection === 'close') {
+        let reason = new Boom(lastDisconnect?.error)?.output.statusCode;
+        if (reason === DisconnectReason.badSession) {
+          console.log('Bad Session File, Please Delete Session and Scan Again');
+          startfdz();
+        } else if (reason === DisconnectReason.connectionClosed) {
+          console.log('Connection closed, reconnecting....');
+          startfdz();
+        } else if (reason === DisconnectReason.connectionLost) {
+          console.log('Connection Lost from Server, reconnecting...');
+          startfdz();
+        } else if (reason === DisconnectReason.connectionReplaced) {
+          console.log('Connection Replaced, Another New Session Opened, Please Close Current Session First');
+          startfdz();
+        } else if (reason === DisconnectReason.loggedOut) {
+          console.log('Device Logged Out, Please Scan Again And Run.');
+          // process.exit();
+          //    startfdz();
+        } else if (reason === DisconnectReason.restartRequired) {
+          console.log('Restart Required, Restarting...');
+          startfdz();
+        } else if (reason === DisconnectReason.timedOut) {
+          console.log('Connection TimedOut, Reconnecting...');
+          startfdz();
+        } else {
+          fdz.end(`Unknown DisconnectReason: ${reason}|${connection}`);
+        }
+      } else if (connection === 'connecting') {
+        lolcatjs.fromString('[Sedang mengkoneksikan]');
+      } else if (connection === 'open') {
+        lolcatjs.fromString('[Connecting to] WhatsApp web');
+        lolcatjs.fromString('[Connected] ' + JSON.stringify(fdz.user, null, 2));
+      }
+    });
 
 
 
+    fdz.ev.on("messages.upsert",
+      async (chatUpdate) => {
+        try {
+          for (let mek of chatUpdate.messages) {
+            if (!mek.message) return
+            mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message: mek.message
+            if (mek.key && mek.key.remoteJid === 'status@broadcast') return
+            if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
+            var m = await require('./src/simpel').modulewa(fdz, mek, store)
+            //         console.log(m)
+            require('./message/handler.js')(fdz, m, mek, chatUpdate, store)
+            if (m.mtype == 'viewOnceMessageV2') {
+              try {
+                //    fdz.ev.emit("viewOnceMessage", m);
+              } catch (err) {}
+            }
+
+          }
+        } catch (e) {
+       //   console.error(e+`messages.upsert\n\n\n\n${require("util").format(chatUpdate)}`)
+         }
+      });
+
+    fdz.ev.on("viewOnceMessage",
+      async (m) => {
+        try {
+          console.log(m)
+          let msg = m.message.viewOnceMessageV2.message
+          let teks = `「 *Anti ViewOnce Message* 」`;
+          teks += `🤠 *Name* : ${m.pushName}`;
+          teks += `👾 *User* : wa.me//${m.sender.split("@")[0]}`;
+          teks += `💫 *MessageType* : ${m.type}`;
+          msg[m.type].caption = teks + `${msg[m.type].caption ? `\n\n💬 *Caption :*\n${msg[m.type].caption}`: ''}`;
+
+          await delay(500)
+          m.copyNForward(m.chat, true, {
+            readViewOnce: true,
+            quoted: m
+          })
+        } catch (err) {
+          console.log(err)
+        }
+        //  console.log(json)
+        //require('./ivents/messages-viewone.js')(fdz,json)
+      })
+
+    fdz.ev.on('groups.update', async (anu) => {
+        console.log(anu)
+        //		m.reply(anu)
+      })
+    fdz.ev.on('group-participants.update', async (anu) => {
+        console.log(anu)
+        //		m.reply(anu)
+      })
 
 
+    fdz.ev.on('creds.update',saveCreds);
 
+  }
 
-
-
-
-
-const startfdz = async () => {
-	const {
-		state,
-		saveCreds
-	} = await useMultiFileAuthState('auth')
-	// fetch latest version of WA Web
-	const {
-		version,
-		isLatest
-	} = await fetchLatestBaileysVersion()
-	console.log(`using WA v${version.join('.')}, isLatest: ${isLatest}`)
-
-	const store = makeInMemoryStore({
-		logger: Pino().child({
-			level: 'silent',
-			stream: 'store'
-		})
-	})
-
-	const sock = makeWASocket({
-		version,
-		logger: Pino({
-			level: 'silent'
-		}),
-		printQRInTerminal: true,
-		//work tempelate message 
-		patchMessageBeforeSending: (message) => {
-                const requiresPatch = !!(
-                  message.buttonsMessage
-              	  || message.templateMessage
-              		|| message.listMessage
-                );
-                if (requiresPatch) {
-                    message = {
-                        viewOnceMessage: {
-                            message: {
-                                messageContextInfo: {
-                                    deviceListMetadataVersion: 2,
-                                    deviceListMetadata: {},
-                                },
-                                ...message,
-                            },
-                        },
-                    };
-                }
-                return message;
-    },
-		browser: ['bot-oni-chan', 'Safari', '1.0.0'],
-		auth: state,
-	//	markOnlineOnConnect: false
-		//msgRetryCounterMap
-	})
-  const fdz = sendmessages(sock,store)
- 	if (fdz.user && fdz.user.id) fdz.user.jid = jidNormalizedUser(fdz.user.id)
-  global.fdz = fdz
-	fdz.ev.on('connection.update', async (update) => {
-		const {
-			connection,
-			lastDisconnect,
-			qr
-		} = update
-
-		try {
-			if (qr) {
-				console.log(color('[', 'white'), color('!', 'red'), color(']', 'white'), color(' scan qr nya kak makek WhatsApp 👍 '))
-				let qrkode = await qrcode.toDataURL(qr, {
-					scale: 20
-				})
-				qrwa = Buffer.from(qrkode.split`,` [1], 'base64')
-			}
-
-			if (connection === 'close') {
-				qrwa = null
-				let reason = new Boom(lastDisconnect?.error)?.output.statusCode
-				if (reason === DisconnectReason.badSession) {
-					console.log(`Bad Session File, Please Delete Session and Scan Again`);
-					startfdz()
-				} else if (reason === DisconnectReason.connectionClosed) {
-					console.log("Connection closed, reconnecting....");
-					startfdz();
-				} else if (reason === DisconnectReason.connectionLost) {
-					console.log("Connection Lost from Server, reconnecting...");
-					startfdz();
-				} else if (reason === DisconnectReason.connectionReplaced) {
-					console.log("Connection Replaced, Another New Session Opened, Please Close Current Session First");
-					startfdz()
-				} else if (reason === DisconnectReason.loggedOut) {
-					console.log(`Device Logged Out, Please Scan Again And Run.`);
-					//			process.exit();
-				} else if (reason === DisconnectReason.restartRequired) {
-					console.log("Restart Required, Restarting...");
-					startfdz();
-				} else if (reason === DisconnectReason.timedOut) {
-					console.log("Connection TimedOut, Reconnecting...");
-					startfdz();
-				} else fdz.end(`Unknown DisconnectReason: ${reason}|${connection}`)
-			}
-			if (update.connection == "connecting" || update.receivedPendingNotifications == "false") {
-				lolcatjs.fromString(`[Sedang mengkoneksikan]`)
-			}
-			if (update.connection == "open" || update.receivedPendingNotifications == "true") {
-				qrwa = null
-				lolcatjs.fromString(`[Connecting to] WhatsApp web`)
-				lolcatjs.fromString(`[Connected] ` + JSON.stringify(fdz.user, null, 2))
-			}
-
-		} catch (err) {
-			console.log('error di connection.update' + err)
-			startfdz();
-		}
-
-	})
-
-store.bind(fdz.ev)
-
-	fdz.ev.on('messages.upsert', async chatUpdate => {
-		try {
-//			mek = chatUpdate.messages[0]
-		for (let mek of chatUpdate.messages) {
-			if (!mek.message) return
-			mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
-      if (mek.key && mek.key.remoteJid === 'status@broadcast') return
-			//		if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
-			var m = modulewa(fdz, mek, store)
-			require('./message/handler.js')(fdz, m, mek, chatUpdate, store, attribute)
-		}
-		} catch (err) {
-			//console.log(JSON.stringify(err, undefined, 2))
-		}
-	})
-
-	fdz.ev.on('group-participants.update', async (anu) => {
-	require('./ivents/group-participants-update.js')(fdz, anu)
-	})
-
-	// detect group update
-	fdz.ev.on("groups.update", async (json) => {
-		require('./ivents/groups-update.js')(fdz, json)
-	})
-
-	fdz.ev.on("message.delete", async (json) => {
-		require('./ivents/message-delete.js')(fdz, json)
-	})
-  
-  fdz.ev.on("viewOnceMessage", async (json) => {
-//		console.log(json)
-		require('./ivents/messages-viewone.js')(fdz,json)
-	})
-	
-	
-  fdz.ev.on("messages.reaction", async (json) => {
-		require('./ivents/messages-reaction.js')(fdz, store, json)
-	})
-
-	fdz.ev.process(
-		async (events) => {
-			// selalu offline
-			if (events['presence.update']) {
-				await fdz.sendPresenceUpdate('unavailable')
-			}
-
-			// menerima pesan baru
-			if (events['messages.upsert']) {
-				const upsert = events['messages.upsert']
-				//     console.log(JSON.stringify(upsert, '', 2))
-				for (let msg of upsert.messages) {
-					if (msg.key.remoteJid === 'status@broadcast') {
-						//console.log(JSON.stringify(upsert, '', 2))
-						if (msg.message?.protocolMessage) return
-						console.log(`Lihat status ${msg.pushName} ${msg.key.participant.split('@')[0]}`)
-						await fdz.readMessages([msg.key])
-						await delay(1000)
-						return fdz.readMessages([msg.key])
-					}
-				}
-
-
-			}
-			// kredensial diperbarui -- simpan season WhatsApp web
-			if (events['creds.update']) {
-				await saveCreds()
-			}
-		}
-	)
-
-
-
-	return fdz
-}
-
-startfdz()
-//process.on('uncaughtException', console.error)
+  startfdz()
