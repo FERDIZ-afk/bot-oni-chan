@@ -14,10 +14,10 @@ module.exports = {
     owner: ["6287752825741","6283861007177"],
     // set owner number on here
     sessionName: "session",
-    // for name session
+    // for default name session 
     prefix: /^[°•π÷×¶∆£¢€¥®™+✓_=|/~!?@#%^&.©^]/i,
-   // pairingNumber: "6287752825741" // Example Input : 62xxx
-   // masih error kalau ada yang tau cara fix nya pull aja ke repository gwe
+    pairingNumber: "" // Example Input : 62xxx
+   // jika mau menggunakan qr kosongin aja nomor di pairingNumber nya
   }
 }
 

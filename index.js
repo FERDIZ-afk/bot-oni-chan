@@ -50,11 +50,13 @@ const {
   //    generateHighQualityLinkPreview: true,
    //   syncFullHistory: true,
    //   mobile: false,
-      markOnlineOnConnect: false,
+    //  markOnlineOnConnect: false,
       logger: Pino({
         level: 'silent'
       }),
       printQRInTerminal: !pairingCode,
+    //  browser: ['Mac OS', 'safari', '5.1.10'],
+     // browser: ['Ubuntu', 'Chrome', '20.0.04'],
       auth: {
         creds: state.creds,
         keys: makeCacheableSignalKeyStore(state.keys, Pino({
@@ -68,8 +70,8 @@ const {
     fdz = require('./message/messages-send').sendmessages(fdz, store)
     if (pairingCode && !fdz?.authState.creds.registered) {
       let phoneNumber;
-      if (typeof pairingCode === "string") {
-        phoneNumber = pairingCode.replace(/[^0-9]/g, '');
+      if (typeof config.options.pairingNumber === "string") {
+        phoneNumber = config.options.pairingNumber.replace(/[^0-9]/g, '');
         if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
           console.log("Start with your country's WhatsApp code, Example : 62xxx")
         }
@@ -78,6 +80,7 @@ const {
       }
 
       setTimeout(async () => {
+    //  console.log(phoneNumber)
         let code = await fdz?.requestPairingCode(phoneNumber);
         code = code?.match(/.{1,4}/g)?.join("-") || code;
         console.log(`your pairing code : ${code}\n\n\n\n\n\n\n`)
@@ -138,17 +141,17 @@ const {
             if (mek.key && mek.key.remoteJid === 'status@broadcast') return
             if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
             var m = await require('./src/simpel').modulewa(fdz, mek, store)
-            //         console.log(m)
+                   //  console.log(m)
             require('./message/handler.js')(fdz, m, mek, chatUpdate, store)
             if (m.mtype == 'viewOnceMessageV2') {
               try {
-                //    fdz.ev.emit("viewOnceMessage", m);
+                //   fdz.ev.emit("viewOnceMessage", m);
               } catch (err) {}
             }
 
           }
         } catch (e) {
-       //   console.error(e+`messages.upsert\n\n\n\n${require("util").format(chatUpdate)}`)
+         console.error(e+`messages.upsert\n\n\n\n${require("util").format(chatUpdate)}`)
          }
       });
 

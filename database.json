@@ -1,0 +1,17 @@
+{
+  "bot": {
+    "contacts": []
+  },
+  "users": {
+    "contacts": {}
+  },
+  "group": {
+    "antilink": [],
+    "antiviewonce": [],
+    "antidelete": []
+  },
+  "donate": {
+    "saweria": []
+  },
+  "menfess": {}
+}
