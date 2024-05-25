@@ -55,9 +55,6 @@ global.loadDatabase = async function loadDatabase() {
       "antiviewonce": [],
       "antidelete": [],
     },
-    "donate": {
-      "saweria": []
-    },
     "menfess": {},
     ...(global.db.data || {})
   };

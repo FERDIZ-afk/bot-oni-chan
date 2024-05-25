@@ -16,7 +16,7 @@ module.exports = {
     sessionName: "session",
     // for default name session 
     prefix: /^[°•π÷×¶∆£¢€¥®™+✓_=|/~!?@#%^&.©^]/i,
-    pairingNumber: "" // Example Input : 62xxx
+    pairingNumber: "6287752825741" // Example Input : 62xxx
    // jika mau menggunakan qr kosongin aja nomor di pairingNumber nya
   }
 }

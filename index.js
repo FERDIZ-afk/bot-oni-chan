@@ -182,6 +182,7 @@ const {
         console.log(anu)
         //		m.reply(anu)
       })
+      
     fdz.ev.on('group-participants.update', async (anu) => {
         console.log(anu)
         //		m.reply(anu)
