@@ -178,9 +178,8 @@ const {
         //require('./ivents/messages-viewone.js')(fdz,json)
       })
 
-    fdz.ev.on('groups.update', async (anu) => {
-        console.log(anu)
-        //		m.reply(anu)
+    fdz.ev.on('groups.update', async (json) => {
+        require('./ivents/groups-update.js')(fdz, json)
       })
       
     fdz.ev.on('group-participants.update', async (anu) => {
